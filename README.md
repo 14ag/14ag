@@ -1,4 +1,4 @@
-# 🎭 14ag's Code Carnival
+# 🎭 my Code Carnival
 
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
@@ -6,9 +6,9 @@
 
 > Where algorithms dance, tables misalign, and code has a sense of humor.
 
-## 🎪 Welcome to the Show
+## 🎪 Welcome to the Show!
 
-Step right up, ladies and gentlemen! You've entered the digital circus of `14ag`. Prepare for a spectacle of wit, code, and just a dash of controlled chaos.
+Step right up, ladies and gentlemen! You've entered the e-circus of `14ag`. Prepare for a spectacle of wit, code, and just a dash of controlled chaos.
 
 ## 🎟️ What's On Display?
 
@@ -26,7 +26,7 @@ Our pièce de résistance (or perhaps our white whale). A repository where:
 - Utility scripts reign supreme (when they're not on coffee break)
 - Table values align... eventually... maybe... we're working on it, okay?
 
-## 🎭 The Method to Our Madness
+## 🎭 My Method
 
 1. Write code that's more complex than necessary
 2. Make it work (fingers crossed)
@@ -34,7 +34,7 @@ Our pièce de résistance (or perhaps our white whale). A repository where:
 4. Wonder why it suddenly developed a mind of its own
 5. Rinse and repeat
 
-## 🤹 Skills in Our Circus
+## 🤹 Skills
 
 - 🏋️ Heavy lifting with JavaScript
 - 🔍 Deep dives into algorithmic mysteries
@@ -47,7 +47,7 @@ We're here, we're coding, and we might fix that bug. Eventually. Maybe after ano
 
 ## 🎤 A Word from the Ringmaster
 
-> "In this code circus, perfection is the clown, and clever chaos is the acrobat."
+> "In this code circus, perfection is the clown and clever chaos is the acrobat."
 
 ## 🎟️ Join the Fun
 
@@ -56,10 +56,10 @@ Feel free to:
 - 🛠️ Contribute (if you dare)
 - 🍿 Sit back and enjoy the show
 
-Remember, in this realm:
+Remember, overrrherrre:
 - Perfection is overrated
-- Clever comments are our standing ovation
-- A good laugh is worth a thousand lines of code
+- Commit messages are messages about the commit
+- A good laugh is worth a thousand lines
 
 ## 🎬 The Grand Finale
 
