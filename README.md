@@ -13,7 +13,7 @@
 
 ## 🎪 Welcome to the Show!
 
-Step right up, ladies and gentlemen! You've entered the e-circus. Prepare for a spectacle of wit, code, and just a dash of controlled chaos.
+Step right up, ladies and gentlemen! You've entered the circus. Prepare for a spectacle of wit, code, chaos.
 
 ## 🎟️ What's On Display?
 
