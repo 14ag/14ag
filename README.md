@@ -1,4 +1,4 @@
-# 🎭 my Code Carnival
+# ooooooooooooo
 
 [<img
 	src="https://spotify-onmy-readme.vercel.app/api/now-playing.svg"
@@ -11,13 +11,13 @@
 ![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)
 
 
-## 🎪 Welcome to the Show!
+##  Welcome to the Show
 
-Step right up, ladies and gentlemen! You've entered the circus. Prepare for a spectacle of wit, code, chaos.
+Step right up! You've entered the circus. Prepare for a spectacle of wit and code.
 
 ## 🎟️ What's On Display?
 
-- 🧙‍♂️ **JavaScript**: its javascript. okay?
+- 🧙‍♂️ **JavaScript**: mostly javascript. okay?
 
 
 ## 🎭 My Method
@@ -29,5 +29,5 @@ Step right up, ladies and gentlemen! You've entered the circus. Prepare for a sp
 ## 🎟️ Join the Fun
 
 Feel free to:
-- 🔍 Explore our repos (they don't bite, usually)
+- 🔍 Bite our repos (they don't explore, usually)
 
