@@ -227,14 +227,3 @@ Seeking roles in:
 
 Interested in environments that value operational efficiency, structured troubleshooting, and user-centered technology deployment.
 ```
-
----
-
-If you want, I can now generate:
-
-* A version optimized specifically for a portfolio website
-* A version structured for GitHub README presentation
-* A recruiter-focused condensed version
-* Or a version rewritten to emphasize cybersecurity instead of general IT support
-
-Which direction do you want to position your portfolio toward?
