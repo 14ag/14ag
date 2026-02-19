@@ -5,22 +5,16 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   /* ---------- Theme Toggle ---------- */
-  const themeBtn = document.getElementById('theme-toggle');
+  const themeCheckbox = document.getElementById('theme-toggle');
   const savedTheme = localStorage.getItem('theme') || 'dark';
   document.documentElement.setAttribute('data-theme', savedTheme);
-  updateThemeIcon(savedTheme);
+  themeCheckbox.checked = savedTheme === 'light';
 
-  themeBtn.addEventListener('click', () => {
-    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  themeCheckbox.addEventListener('change', () => {
+    const next = themeCheckbox.checked ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('theme', next);
-    updateThemeIcon(next);
   });
-
-  function updateThemeIcon(theme) {
-    themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
-    themeBtn.setAttribute('aria-label', `Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`);
-  }
 
   /* ---------- Mobile Menu ---------- */
   const hamburger = document.getElementById('hamburger');
@@ -171,8 +165,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (valid) {
+      const nameVal = name.value.trim();
+      const emailVal = email.value.trim();
+      const msgVal = message.value.trim();
+
+      const subject = encodeURIComponent(`Portfolio Contact from ${nameVal}`);
+      const body = encodeURIComponent(`Name: ${nameVal}\nEmail: ${emailVal}\n\n${msgVal}`);
+      window.location.href = `mailto:muriukipn@gmail.com?subject=${subject}&body=${body}`;
+
       form.reset();
-      showToast('Message sent successfully! 🎉');
+      showToast('Opening your email client… 📧');
     }
   });
 
