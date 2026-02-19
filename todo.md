@@ -111,7 +111,4 @@ Output Requirements
 * Separate files clearly
 * Comment non-obvious logic
 * Do not include explanations outside the code
-
----
-
-If you want, I can generate a more aggressive version that forces architectural rigor (component-style structure, naming conventions, strict performance rules, etc.).
+s
