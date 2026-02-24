@@ -1,0 +1,3 @@
+set up .env in python
+find a way to read os vars in js
+link frontend to backend
