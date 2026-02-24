@@ -169,12 +169,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const emailVal = email.value.trim();
       const msgVal = message.value.trim();
 
-      const subject = encodeURIComponent(`Portfolio Contact from ${nameVal}`);
-      const body = encodeURIComponent(`Name: ${nameVal}\nEmail: ${emailVal}\n\n${msgVal}`);
-      window.location.href = `mailto:muriukipn@gmail.com?subject=${subject}&body=${body}`;
+      const sendMessage = async (URL, message_content) => {
+        const response = await fetch(URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: message_content,
+        });
+
+        const data = await response.json();
+
+        console.log(data.message);
+      };
+
+      sendMessage(BASEURL + "/message", { email: emailVal, name: nameVal, message_body: msgVal });
 
       form.reset();
-      showToast('Opening your email client… 📧');
+      showToast('your message has been sent… 📧');
     }
   });
 
