@@ -32,7 +32,7 @@ async def get_project_info():
 
 
 @app.post("/message")
-async def receive_message(message_content: dict[str,str]):
+async def receive_message(message_content: Dict):
     try:
         master_token=str(os.getenv("GKEEP_TOKEN"))
 
@@ -71,8 +71,9 @@ async def remove_project(project_key: str):
 
 # modify a project
 @app.put("/projects")
-async def modify_projects(project_content: Dict[str,str]):
+async def modify_projects(project_content: Dict):
     try:
+                return project_data_file_content
         try:
             with open(r"data.json", "rw") as project_data_file:
                 project_data_file_content=json.loads(project_data_file.read())
@@ -82,7 +83,7 @@ async def modify_projects(project_content: Dict[str,str]):
                 project_data_file.write(json.dumps(project_data_file_content))
 
         except:
-            return
+            return "could not write to jason file"
         return
     except:
         return {"message":"failiure"}
