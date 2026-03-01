@@ -1,200 +1,303 @@
 /* ============================================
    Philip Muriuki — Portfolio JS
    ============================================ */
+let URL=127.0.0.1:8000
+document.addEventListener("DOMContentLoaded", () => {
+	/* ---------- Theme Toggle ---------- */
+	const themeCheckbox = document.getElementById("theme-toggle");
+	const savedTheme = localStorage.getItem("theme") || "dark";
+	document.documentElement.setAttribute("data-theme", savedTheme);
+	themeCheckbox.checked = savedTheme === "light";
 
-document.addEventListener('DOMContentLoaded', () => {
+	themeCheckbox.addEventListener("change", () => {
+		const next = themeCheckbox.checked ? "light" : "dark";
+		document.documentElement.setAttribute("data-theme", next);
+		localStorage.setItem("theme", next);
+	});
 
-  /* ---------- Theme Toggle ---------- */
-  const themeCheckbox = document.getElementById('theme-toggle');
-  const savedTheme = localStorage.getItem('theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', savedTheme);
-  themeCheckbox.checked = savedTheme === 'light';
+	/* ---------- Mobile Menu ---------- */
+	const hamburger = document.getElementById("hamburger");
+	const navLinks = document.getElementById("nav-links");
 
-  themeCheckbox.addEventListener('change', () => {
-    const next = themeCheckbox.checked ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
-  });
+	hamburger.addEventListener("click", () => {
+		hamburger.classList.toggle("active");
+		navLinks.classList.toggle("open");
+	});
 
-  /* ---------- Mobile Menu ---------- */
-  const hamburger = document.getElementById('hamburger');
-  const navLinks = document.getElementById('nav-links');
+	// Close menu on link click
+	navLinks.querySelectorAll("a").forEach((link) => {
+		link.addEventListener("click", () => {
+			hamburger.classList.remove("active");
+			navLinks.classList.remove("open");
+		});
+	});
 
-  hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navLinks.classList.toggle('open');
-  });
+	/* ---------- Sticky Navbar Shadow ---------- */
+	const navbar = document.querySelector(".navbar");
+	window.addEventListener(
+		"scroll",
+		() => {
+			navbar.classList.toggle("scrolled", window.scrollY > 50);
+		},
+		{ passive: true },
+	);
 
-  // Close menu on link click
-  navLinks.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      hamburger.classList.remove('active');
-      navLinks.classList.remove('open');
-    });
-  });
+	/* ---------- Active Section Highlighting ---------- */
+	const sections = document.querySelectorAll("section[id]");
+	const navAnchors = document.querySelectorAll(".nav-links a");
 
-  /* ---------- Sticky Navbar Shadow ---------- */
-  const navbar = document.querySelector('.navbar');
-  window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 50);
-  }, { passive: true });
+	const sectionObserver = new IntersectionObserver(
+		(entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting) {
+					navAnchors.forEach((a) => a.classList.remove("active"));
+					const target = document.querySelector(
+						`.nav-links a[href="#${entry.target.id}"]`,
+					);
+					if (target) target.classList.add("active");
+				}
+			});
+		},
+		{ rootMargin: "-40% 0px -55% 0px" },
+	);
 
-  /* ---------- Active Section Highlighting ---------- */
-  const sections = document.querySelectorAll('section[id]');
-  const navAnchors = document.querySelectorAll('.nav-links a');
+	sections.forEach((sec) => sectionObserver.observe(sec));
 
-  const sectionObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        navAnchors.forEach(a => a.classList.remove('active'));
-        const target = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
-        if (target) target.classList.add('active');
-      }
-    });
-  }, { rootMargin: '-40% 0px -55% 0px' });
+	/* ---------- Typing Effect ---------- */
+	const typingEl = document.getElementById("typing-text");
+	const phrases = [
+		"ICT Management Professional",
+		"Technical Support Specialist",
+		"Systems Administration",
+		"Problem Solver",
+	];
+	let phraseIdx = 0,
+		charIdx = 0,
+		deleting = false;
 
-  sections.forEach(sec => sectionObserver.observe(sec));
+	function type() {
+		const current = phrases[phraseIdx];
+		if (!deleting) {
+			typingEl.textContent = current.substring(0, charIdx + 1);
+			charIdx++;
+			if (charIdx === current.length) {
+				deleting = true;
+				setTimeout(type, 1800);
+				return;
+			}
+			setTimeout(type, 70);
+		} else {
+			typingEl.textContent = current.substring(0, charIdx - 1);
+			charIdx--;
+			if (charIdx === 0) {
+				deleting = false;
+				phraseIdx = (phraseIdx + 1) % phrases.length;
+			}
+			setTimeout(type, 40);
+		}
+	}
+	type();
 
-  /* ---------- Typing Effect ---------- */
-  const typingEl = document.getElementById('typing-text');
-  const phrases = [
-    'ICT Management Professional',
-    'Technical Support Specialist',
-    'Systems Administration',
-    'Problem Solver'
-  ];
-  let phraseIdx = 0, charIdx = 0, deleting = false;
+	/* ---------- Project Filtering ---------- */
 
-  function type() {
-    const current = phrases[phraseIdx];
-    if (!deleting) {
-      typingEl.textContent = current.substring(0, charIdx + 1);
-      charIdx++;
-      if (charIdx === current.length) {
-        deleting = true;
-        setTimeout(type, 1800);
-        return;
-      }
-      setTimeout(type, 70);
-    } else {
-      typingEl.textContent = current.substring(0, charIdx - 1);
-      charIdx--;
-      if (charIdx === 0) {
-        deleting = false;
-        phraseIdx = (phraseIdx + 1) % phrases.length;
-      }
-      setTimeout(type, 40);
-    }
-  }
-  type();
+	async function getProjects(url) {
+		try {
+			const projects = await fetch(url, {});
+			return projects.json();
+		} catch {
+			throw new Error("error");
+		}
+	}
 
-  /* ---------- Project Filtering ---------- */
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  const projectCards = document.querySelectorAll('.project-card');
+	let projects = getProjects(URL);
+	let project_grid = document.querySelector("div.project-grid");
 
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const cat = btn.dataset.filter;
+	const buttons = document.querySelector("div.filter-bar-reveal");
+	for (project in projects) {
+		let button = document.createElement("button");
+		button.class = "filter-btn";
+		button.setAttribute("data-filter", project.category);
+		button.textContent = `${project.category}`;
+		buttons.appendChild(button);
 
-      projectCards.forEach(card => {
-        if (cat === 'all' || card.dataset.category === cat) {
-          card.style.display = 'flex';
-          requestAnimationFrame(() => {
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-          });
-        } else {
-          card.style.opacity = '0';
-          card.style.transform = 'translateY(20px)';
-          setTimeout(() => { card.style.display = 'none'; }, 300);
-        }
-      });
-    });
-  });
+		let _article = document.createElement("article");
+		_article.class = "project-card reveal";
+		_article.setAttribute("data-category", project.category);
+		let _div = document.createElement("div");
+		_div.setAttribute("class", "card-icon");
+		let _svg = document.createElement("svg");
+		let _svg_content =
+			'<rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><line x1="8" y1="21" x2="16" y2="21" /><line x1="12" y1="17" x2="12" y2="21" />';
+		_svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+		_svg.setAttribute("width", "32");
+		_svg.setAttribute("height", "32");
+		_svg.setAttribute("viewBox", "0 0 24 24");
+		_svg.setAttribute("fill", "none");
+		_svg.setAttribute("stroke", "currentColor");
+		_svg.setAttribute("stroke-width", "1.5");
+		_svg.setAttribute("stroke-linecap", "round");
+		_svg.setAttribute("stroke-linejoin", "round");
+		_svg.innerHTML = _svg_content;
+		_div.appendChild(_svg);
 
-  /* ---------- Scroll Reveal ---------- */
-  const revealEls = document.querySelectorAll('.reveal');
-  const revealObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.15 });
+		let project_heading = document.createElement("h3");
+		project_heading.innerText = project.title;
 
-  revealEls.forEach(el => revealObserver.observe(el));
+		let project_description = document.createElement("p");
+		project_description.innerText = project.description;
 
-  /* ---------- Back-to-Top ---------- */
-  const bttBtn = document.getElementById('back-to-top');
-  window.addEventListener('scroll', () => {
-    bttBtn.classList.toggle('visible', window.scrollY > window.innerHeight);
-  }, { passive: true });
+		let _div2 = document.createElement("div");
+		_div2.setAttribute("class", "project-tags");
+		for (item in project.techs) {
+			let _span = document.createElement("span");
+			_span.innerText = item;
+			_div2.appendChild(_span);
+		}
 
-  bttBtn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+		let _div3 = document.createElement("div");
+		_div3.setAttribute("class", "project-links");
+		_a = document.createElement("a");
+		_a.setAttribute("href", project._url);
+		_a.setAttribute("target", "_blank");
+		_a.setAttribute("rel", "noopener");
+		_a.setAttribute("aria-label", "GitHub repo");
+		_a.innerText = "⟨/⟩ Code";
+		_div3.appendChild(_a);
 
-  /* ---------- Contact Form ---------- */
-  const form = document.getElementById('contact-form');
+		_article.appendChild(_div);
+		_article.appendChild(project_heading);
+		_article.appendChild(project_description);
+		_article.appendChild(_div2);
+		_article.appendChild(_div3);
 
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    let valid = true;
+		project_grid.appendChild(_article);
+	}
 
-    // Reset errors
-    form.querySelectorAll('.form-group').forEach(g => g.classList.remove('error'));
+	const filterBtns = document.querySelectorAll(".filter-btn");
+	const projectCards = document.querySelectorAll(".project-card");
+	filterBtns.forEach((btn) => {
+		btn.addEventListener("click", () => {
+			filterBtns.forEach((b) => b.classList.remove("active"));
+			btn.classList.add("active");
+			const cat = btn.dataset.filter;
 
-    const name = form.querySelector('#form-name');
-    const email = form.querySelector('#form-email');
-    const message = form.querySelector('#form-message');
+			projectCards.forEach((card) => {
+				if (cat === "all" || card.dataset.category === cat) {
+					card.style.display = "flex";
+					requestAnimationFrame(() => {
+						card.style.opacity = "1";
+						card.style.transform = "translateY(0)";
+					});
+				} else {
+					card.style.opacity = "0";
+					card.style.transform = "translateY(20px)";
+					setTimeout(() => {
+						card.style.display = "none";
+					}, 300);
+				}
+			});
+		});
+	});
 
-    if (!name.value.trim()) {
-      name.closest('.form-group').classList.add('error');
-      valid = false;
-    }
-    if (!email.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
-      email.closest('.form-group').classList.add('error');
-      valid = false;
-    }
-    if (!message.value.trim()) {
-      message.closest('.form-group').classList.add('error');
-      valid = false;
-    }
+	/* ---------- Scroll Reveal ---------- */
+	const revealEls = document.querySelectorAll(".reveal");
+	const revealObserver = new IntersectionObserver(
+		(entries) => {
+			entries.forEach((entry) => {
+				if (entry.isIntersecting) {
+					entry.target.classList.add("visible");
+					revealObserver.unobserve(entry.target);
+				}
+			});
+		},
+		{ threshold: 0.15 },
+	);
 
-    if (valid) {
-      const nameVal = name.value.trim();
-      const emailVal = email.value.trim();
-      const msgVal = message.value.trim();
+	revealEls.forEach((el) => revealObserver.observe(el));
 
-      const sendMessage = async (URL, message_content) => {
-        const response = await fetch(URL, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: message_content,
-        });
+	/* ---------- Back-to-Top ---------- */
+	const bttBtn = document.getElementById("back-to-top");
+	window.addEventListener(
+		"scroll",
+		() => {
+			bttBtn.classList.toggle(
+				"visible",
+				window.scrollY > window.innerHeight,
+			);
+		},
+		{ passive: true },
+	);
 
-        const data = await response.json();
+	bttBtn.addEventListener("click", () => {
+		window.scrollTo({ top: 0, behavior: "smooth" });
+	});
 
-        console.log(data.message);
-      };
+	/* ---------- Contact Form ---------- */
+	const form = document.getElementById("contact-form");
 
-      sendMessage(BASEURL + "/message", { email: emailVal, name: nameVal, message_body: msgVal });
+	form.addEventListener("submit", (e) => {
+		e.preventDefault();
+		let valid = true;
 
-      form.reset();
-      showToast('your message has been sent… 📧');
-    }
-  });
+		// Reset errors
+		form.querySelectorAll(".form-group").forEach((g) =>
+			g.classList.remove("error"),
+		);
 
-  function showToast(msg) {
-    const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3500);
-  }
+		const name = form.querySelector("#form-name");
+		const email = form.querySelector("#form-email");
+		const message = form.querySelector("#form-message");
 
+		if (!name.value.trim()) {
+			name.closest(".form-group").classList.add("error");
+			valid = false;
+		}
+		if (
+			!email.value.trim() ||
+			!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)
+		) {
+			email.closest(".form-group").classList.add("error");
+			valid = false;
+		}
+		if (!message.value.trim()) {
+			message.closest(".form-group").classList.add("error");
+			valid = false;
+		}
+
+		if (valid) {
+			const nameVal = name.value.trim();
+			const emailVal = email.value.trim();
+			const msgVal = message.value.trim();
+
+			const sendMessage = async (URL, message_content) => {
+				const response = await fetch(URL, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: message_content,
+				});
+
+				const data = await response.json();
+
+				console.log(data.message);
+			};
+
+			sendMessage(BASEURL + "/message", {
+				email: emailVal,
+				name: nameVal,
+				message_body: msgVal,
+			});
+
+			form.reset();
+			showToast("your message has been sent… 📧");
+		}
+	});
+
+	function showToast(msg) {
+		const toast = document.getElementById("toast");
+		toast.textContent = msg;
+		toast.classList.add("show");
+		setTimeout(() => toast.classList.remove("show"), 3500);
+	}
 });
