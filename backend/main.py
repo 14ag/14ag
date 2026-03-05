@@ -1,94 +1,146 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import Dict
+from __future__ import annotations
+
 import json
-import gkeepapi
 import os
+import re
+from pathlib import Path
+from typing import Any
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+try:
+    import gkeepapi  # type: ignore
+except Exception:  # pragma: no cover
+    gkeepapi = None
 
 
-class Content(BaseModel):
-    title: str
-    body: str
+DATA_FILE = Path(__file__).resolve().parent / "data.json"
+EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+
+
+class MessagePayload(BaseModel):
+    name: str
+    email: str
+    message_body: str
 
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://127.0.0.1:5500",
+        "http://localhost:5500",
+        "http://127.0.0.1:5173",
+        "http://localhost:5173",
+        "http://127.0.0.1:3000",
+        "http://localhost:3000",
+        "null",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 @app.get("/")
-async def test_function():
-    return "Hello, World!"
+async def healthcheck() -> dict[str, str]:
+    return {"status": "ok"}
+
+
+def _read_json_file() -> Any:
+    if not DATA_FILE.exists():
+        return []
+
+    raw = DATA_FILE.read_text(encoding="utf-8").strip()
+    if not raw:
+        return []
+
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        return []
+
+
+def _normalize_projects(raw: Any) -> list[dict[str, Any]]:
+    if isinstance(raw, list):
+        candidates = raw
+    elif isinstance(raw, dict) and isinstance(raw.get("projects"), list):
+        candidates = raw["projects"]
+    elif isinstance(raw, dict):
+        candidates = list(raw.values())
+    else:
+        candidates = []
+
+    normalized: list[dict[str, Any]] = []
+    for item in candidates:
+        if not isinstance(item, dict):
+            continue
+
+        techs = item.get("techs", [])
+        if isinstance(techs, str):
+            techs = [techs]
+        elif not isinstance(techs, list):
+            techs = []
+
+        project: dict[str, Any] = {
+            "title": str(item.get("title") or "Untitled project"),
+            "description": str(item.get("description") or "No description available."),
+            "techs": [str(tech) for tech in techs],
+            "_url": str(item.get("_url") or item.get("url") or "#"),
+            "category": str(item.get("category") or "other").lower(),
+        }
+
+        live_url = item.get("live_url") or item.get("demo_url")
+        if live_url:
+            project["live_url"] = str(live_url)
+
+        normalized.append(project)
+
+    return normalized
 
 
 @app.get("/projects")
-async def get_project_info():
-    try:
-        with open(r"data.json" "r") as project_data_file:
-            project_data_content=json.loads(project_data_file.read())
-
-    except:
-        return "could not get projects"
-
-    return project_data_content
+async def get_projects() -> dict[str, list[dict[str, Any]]]:
+    return {"projects": _normalize_projects(_read_json_file())}
 
 
 @app.post("/message")
-async def receive_message(message_content: Dict):
+async def receive_message(payload: MessagePayload) -> dict[str, str]:
+    if not payload.name.strip() or not payload.message_body.strip():
+        raise HTTPException(status_code=400, detail="name and message_body are required")
+
+    if not EMAIL_RE.match(payload.email.strip()):
+        raise HTTPException(status_code=400, detail="email must be valid")
+
+    token = os.getenv("GKEEP_TOKEN", "").strip()
+    keep_email = os.getenv("GKEEP_EMAIL", "user@gmail.com").strip()
+
+    if not token or gkeepapi is None:
+        return {
+            "status": "accepted_fallback",
+            "message": "Message accepted without Google Keep sync.",
+        }
+
     try:
-        master_token=str(os.getenv("GKEEP_TOKEN"))
-
         keep = gkeepapi.Keep()
-        keep.authenticate('user@gmail.com', master_token)
-        
-        note_body_content="".join(x for x in message_content.values())
-        note = keep.createNote('portfolio_dms', note_body_content)
-        note.pinned = True
-        note.color = gkeepapi.node.ColorValue.Red
+        keep.authenticate(keep_email, token)
 
+        note_body = (
+            f"Email: {payload.email.strip()}\n\n"
+            f"\n{payload.message_body.strip()}"
+        )
+        note = keep.createNote(payload.name.strip(), note_body)
+        note.pinned = False
+        note.color = gkeepapi.node.ColorValue.Teal
+        note.labels.add()
         keep.sync()
 
-        print(note.title)
-        print(note.text)
-        return
-    except:
-        return {"message":"failiure"}
-
-
-# remove a project
-@app.delete("/projects")
-async def remove_project(project_key: str):
-    try:
-        try:
-            with open(r"data.json", "rw") as project_data_file:
-                project_data_file_content=json.loads(project_data_file.read())
-                project_data_file_content.pop(project_key)
-                project_data_file.write(json.dumps(project_data_file_content))
-        except:
-            return
-        return
-    except:
-        return {"message":"failiure"}
-    
-
-# modify a project
-@app.put("/projects")
-async def modify_projects(project_content: Dict):
-    try:
-                return project_data_file_content
-        try:
-            with open(r"data.json", "rw") as project_data_file:
-                project_data_file_content=json.loads(project_data_file.read())
-                for key,value in project_content.items():
-                    project_data_file_content[key]=project_content[value]
-
-                project_data_file.write(json.dumps(project_data_file_content))
-
-        except:
-            return "could not write to jason file"
-        return
-    except:
-        return {"message":"failiure"}
-    
-
-
-
-
+        return {"status": "success", "message": "Message saved to Google Keep."}
+    except Exception:
+        return {
+            "status": "accepted_fallback",
+            "message": "Message accepted but Google Keep sync failed.",
+        }
