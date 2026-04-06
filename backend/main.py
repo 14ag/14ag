@@ -86,6 +86,7 @@ def _normalize_projects(raw: Any) -> list[dict[str, Any]]:
             techs = []
 
         project: dict[str, Any] = {
+            "icon": str(item.get("icon") or "folder").lower(),
             "title": str(item.get("title") or "Untitled project"),
             "description": str(item.get("description") or "No description available."),
             "techs": [str(tech) for tech in techs],

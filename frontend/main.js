@@ -146,6 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function createProjectCard(project) {
+    const _icon = String(project.icon).toLowerCase();
     const category = String(project.category || "other").toLowerCase();
     const techs = Array.isArray(project.techs) ? project.techs : [];
     const title = project.title || "Untitled project";
@@ -157,14 +158,46 @@ document.addEventListener("DOMContentLoaded", () => {
     article.className = "project-card reveal";
     article.dataset.category = category;
 
-    article.innerHTML = `
-      <div class="card-icon">
+  
+    const pcIcon = `<div class="card-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
           <line x1="8" y1="21" x2="16" y2="21"></line>
           <line x1="12" y1="17" x2="12" y2="21"></line>
         </svg>
-      </div>
+      </div>`;
+    const fileIcon = `<div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+              <polyline points="13 2 13 9 20 9" />
+              <path d="M10 12l2 2 4-4" />
+            </svg></div>`;
+    const folderIcon = `<div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+            </svg></div>`;
+    const netIcon = `<div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12.55a11 11 0 0 1 14.08 0" />
+              <path d="M1.42 9a16 16 0 0 1 21.16 0" />
+              <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+              <line x1="12" y1="20" x2="12.01" y2="20" />
+            </svg></div>`;
+    const cameraIcon = `<div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+              <circle cx="12" cy="13" r="4" />
+            </svg></div>`;
+
+    const iconMap = {
+      pc: pcIcon,
+      file: fileIcon,
+      folder: folderIcon,
+      net: netIcon,
+      camera: cameraIcon
+    };
+
+    article.innerHTML = `
+      ${iconMap[_icon] || folderIcon}
       <h3></h3>
       <p></p>
       <div class="project-tags"></div>
@@ -188,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
     codeAnchor.target = "_blank";
     codeAnchor.rel = "noopener";
     codeAnchor.setAttribute("aria-label", "GitHub repo");
-    codeAnchor.textContent = "</> Code";
+    codeAnchor.textContent = "⟨/⟩ Code";
     linksContainer.appendChild(codeAnchor);
 
     if (liveUrl) {
