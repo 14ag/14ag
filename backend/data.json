@@ -7,6 +7,42 @@
         "description": "description",
         "_url":"codeUrl",
         "live_url":"liveUrl"
+    },
+    "item2": {
+        "icon": "camera",
+        "category": "scripts",
+        "techs": ["powershell", "Exiftool", "batch"],
+        "title": "Takeout Metadata Embedder",
+        "description": "Batch scripts and PowerShell tooling that parse Google Takeout JSON sidecar files and embed timestamps, GPS            coordinates, and descriptions back into media files via ExifTool.",
+        "_url":"https://github.com/14ag/takeout-matadata",
+        "live_url":""
+    },
+    "item3": {
+        "icon": "file",
+        "category": "category",
+        "techs": ["techs1", "techs2"],
+        "title": "title",
+        "description": "description",
+        "_url":"codeUrl",
+        "live_url":"liveUrl"
+    },
+    "item4": {
+        "icon": "pc",
+        "category": "category",
+        "techs": ["techs1", "techs2"],
+        "title": "title",
+        "description": "description",
+        "_url":"codeUrl",
+        "live_url":"liveUrl"
+    },
+    "item5": {
+        "icon": "pc",
+        "category": "category",
+        "techs": ["techs1", "techs2"],
+        "title": "title",
+        "description": "description",
+        "_url":"codeUrl",
+        "live_url":"liveUrl"
     }
 
 }
