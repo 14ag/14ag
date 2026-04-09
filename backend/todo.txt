@@ -1,4 +1,6 @@
-create a python backend using flask or django
 create nosql database that contains projects
-update database directly using api key from local machine
 receive message through google keep
+
+done:
+create a python backend using flask or django
+update database directly using api key from local machine
