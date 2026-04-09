@@ -1,14 +1,17 @@
 from __future__ import annotations
-
+from supabase import create_client, Client 
+from dotenv import load_dotenv, dotenv_values
 import json
 import os
 import re
 from pathlib import Path
 from typing import Any
-
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+
+
+load_dotenv()
 
 try:
     import gkeepapi  # type: ignore
