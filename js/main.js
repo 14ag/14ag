@@ -2,8 +2,6 @@
    Philip Muriuki - Portfolio JS
    ============================================ */
 
-const API_BASE_URL = "http://127.0.0.1:8000";
-
 document.addEventListener("DOMContentLoaded", () => {
   /* ---------- Theme Toggle ---------- */
   const themeCheckbox = document.getElementById("theme-toggle");
@@ -310,6 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const payload = await response.json();
       const projects = normalizeProjects(payload);
+      console.log("Loaded projects:", projects);
 
       projectGrid.innerHTML = "";
 
