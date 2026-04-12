@@ -15,7 +15,7 @@ To recreate this project with the same configuration:
 
 ```sh
 # recreate this project
-npx sv@0.15.1 create --template minimal --types jsdoc --add eslint vitest="usages:unit,component" --install npm ./
+npx sv@0.15.1 create --template minimal --types jsdoc --install npm ./
 ```
 
 ## Developing
