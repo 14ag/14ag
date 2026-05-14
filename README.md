@@ -1,4 +1,4 @@
-# ooooooooooooo
+# OOOOOOOOOOOOOOOOOOOOOOO
 
 [<img
 	src="https://spotify-onmy-readme.vercel.app/api/now-playing.svg"
@@ -6,27 +6,16 @@
 	height="52"
 />](https://open.spotify.com/user/31go5wvrwm6pevaak4bnefkc2lim)
 
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
-![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
-![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)
+<br>
 
-
-##  Welcome to the Show
-
-Step right up! You've entered the circus. Prepare for a spectacle of wit and code.
-
-## 🎟️ What's On Display?
-
-- 🧙‍♂️ **JavaScript**: mostly javascript. okay?
-
-
-## 🎭 My Method
+This is stash 1/2 where i keep code
+ 
+## My Method
 
 1. Write code 
 2. Make it work (fingers crossed)
 3. repeat
 
-## 🎟️ Join the Fun
 
 Feel free to:
 - 🔍 Bite our repos (they don't explore, usually)
