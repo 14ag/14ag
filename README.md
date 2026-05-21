@@ -1,16 +1,11 @@
-# OOOOOOOOOOOOOOOOOOOOOOO
+![Banner](./assets/banner.webp)
 
-[<img
-	src="https://spotify-onmy-readme.vercel.app/api/now-playing.svg"
-	width="540"
-	height="52"
-/>](https://open.spotify.com/user/31go5wvrwm6pevaak4bnefkc2lim)
+## Philip wants you to look at his Repos and Contribute
 
-<br>
 
-This is stash 1/2 where i keep code
+This is stash 1/2 where he keep code
  
-## My Method
+## His Method
 
 1. Write code 
 2. Make it work (fingers crossed)
