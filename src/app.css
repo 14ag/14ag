@@ -1,14 +1,6 @@
-/* ============================================
-   Philip Muriuki — Portfolio
-   Vanilla CSS • Dark-first theme
-   ============================================ */
-
-/* Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap');
 
-/* ----- Theme Tokens ----- */
 :root {
-  /* Dark (default) */
   --bg-primary: #0a0a1a;
   --bg-secondary: #12122a;
   --bg-tertiary: #1a1a3e;
@@ -27,20 +19,16 @@
   --tag-text: #00d4aa;
   --divider: rgba(255, 255, 255, 0.06);
   --toast-bg: #1a1a3e;
-
-  /* Geometry */
   --max-width: 1200px;
   --radius: 12px;
   --radius-sm: 8px;
   --radius-pill: 50px;
   --section-pad: 100px 0;
-
-  /* Timing */
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --speed: 0.3s;
 }
 
-[data-theme="light"] {
+[data-theme='light'] {
   --bg-primary: #f5f5f7;
   --bg-secondary: #ffffff;
   --bg-tertiary: #eaeaef;
@@ -61,7 +49,6 @@
   --toast-bg: #ffffff;
 }
 
-/* ----- Reset & Base ----- */
 *,
 *::before,
 *::after {
@@ -89,8 +76,14 @@ a {
   text-decoration: none;
 }
 
-ul {
-  list-style: none;
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
 }
 
 img {
@@ -98,12 +91,6 @@ img {
   display: block;
 }
 
-button {
-  cursor: pointer;
-  font-family: inherit;
-}
-
-/* ----- Utility ----- */
 .container {
   max-width: var(--max-width);
   margin: 0 auto;
@@ -141,10 +128,10 @@ button {
   margin: 0 auto;
 }
 
-/* ----- Buttons ----- */
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 14px 32px;
   border: none;
@@ -159,7 +146,7 @@ button {
   color: #0a0a1a;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background: var(--accent-hover);
   box-shadow: 0 0 30px var(--accent-glow);
   transform: translateY(-2px);
@@ -177,9 +164,11 @@ button {
   transform: translateY(-2px);
 }
 
-/* ============================================
-   NAVBAR
-   ============================================ */
+.btn:disabled {
+  opacity: 0.75;
+  cursor: wait;
+}
+
 .navbar {
   position: fixed;
   top: 0;
@@ -206,7 +195,6 @@ button {
 .nav-logo {
   font-size: 1.4rem;
   font-weight: 800;
-  letter-spacing: -0.5px;
 }
 
 .nav-logo span {
@@ -247,14 +235,12 @@ button {
   width: 100%;
 }
 
-/* Right controls */
 .nav-controls {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-/* Theme Switch */
 .theme-switch {
   position: relative;
   display: inline-flex;
@@ -300,8 +286,7 @@ button {
   z-index: 2;
 }
 
-/* When checkbox is checked (light mode) — knob slides right */
-.theme-switch input:checked~.switch-track .switch-knob {
+.theme-switch input:checked ~ .switch-track .switch-knob {
   transform: translateX(29px);
 }
 
@@ -323,25 +308,22 @@ button {
   opacity: 0.45;
 }
 
-/* Highlight the active icon */
-[data-theme="dark"] .moon-icon {
+[data-theme='dark'] .moon-icon {
   opacity: 1;
   color: #dfe6e9;
 }
 
-[data-theme="light"] .sun-icon {
+[data-theme='light'] .sun-icon {
   opacity: 1;
   color: #f39c12;
 }
 
-/* Hamburger */
 .hamburger {
   display: none;
   flex-direction: column;
   gap: 5px;
   background: none;
   border: none;
-  cursor: pointer;
   padding: 8px;
 }
 
@@ -365,9 +347,6 @@ button {
   transform: rotate(-45deg) translate(5px, -5px);
 }
 
-/* ============================================
-   HERO
-   ============================================ */
 .hero {
   position: relative;
   min-height: 100vh;
@@ -376,7 +355,6 @@ button {
   overflow: hidden;
 }
 
-/* Animated background */
 .hero-bg {
   position: absolute;
   inset: 0;
@@ -387,7 +365,7 @@ button {
 .hero-bg .shape {
   position: absolute;
   border-radius: 50%;
-  opacity: .08;
+  opacity: 0.08;
   animation: float 20s infinite ease-in-out;
 }
 
@@ -419,7 +397,6 @@ button {
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translate(0, 0) scale(1);
@@ -434,12 +411,12 @@ button {
   }
 }
 
-[data-theme="light"] .hero-bg {
+[data-theme='light'] .hero-bg {
   background: linear-gradient(135deg, #f5f5f7 0%, #e8e8f0 50%, #dfe6ed 100%);
 }
 
-[data-theme="light"] .hero-bg .shape {
-  opacity: .06;
+[data-theme='light'] .hero-bg .shape {
+  opacity: 0.06;
 }
 
 .hero-content {
@@ -479,7 +456,7 @@ button {
   height: 1.2em;
   background: var(--accent);
   margin-left: 2px;
-  animation: blink .8s step-end infinite;
+  animation: blink 0.8s step-end infinite;
   vertical-align: text-bottom;
 }
 
@@ -503,9 +480,6 @@ button {
   flex-wrap: wrap;
 }
 
-/* ============================================
-   PROJECTS
-   ============================================ */
 .projects {
   padding: var(--section-pad);
   background: var(--bg-secondary);
@@ -614,9 +588,11 @@ button {
   color: var(--accent);
 }
 
-/* ============================================
-   SKILLS
-   ============================================ */
+.project-feedback {
+  color: var(--text-secondary);
+  min-height: 1.5rem;
+}
+
 .skills {
   padding: var(--section-pad);
 }
@@ -666,9 +642,6 @@ button {
   box-shadow: 0 4px 16px var(--accent-glow);
 }
 
-/* ============================================
-   ABOUT
-   ============================================ */
 .about {
   padding: var(--section-pad);
   background: var(--bg-secondary);
@@ -698,7 +671,6 @@ button {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
 }
 
 .about-image::before {
@@ -708,17 +680,6 @@ button {
   border-radius: var(--radius);
   background: linear-gradient(135deg, var(--accent), #6c5ce7);
   z-index: -1;
-}
-
-.about-image .placeholder-avatar {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 5rem;
-  color: var(--text-secondary);
-  background: var(--bg-tertiary);
 }
 
 .about-text h3 {
@@ -750,9 +711,6 @@ button {
   color: var(--text-secondary);
 }
 
-/* ============================================
-   CONTACT
-   ============================================ */
 .contact {
   padding: var(--section-pad);
 }
@@ -815,7 +773,6 @@ a.contact-item:hover .icon-circle {
   font-size: 0.92rem;
 }
 
-/* Contact form */
 .contact-form {
   display: flex;
   flex-direction: column;
@@ -834,7 +791,6 @@ a.contact-item:hover .icon-circle {
   border: 1px solid var(--input-border);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
-  font-family: inherit;
   font-size: 0.95rem;
   transition: border var(--speed) var(--ease);
   outline: none;
@@ -863,21 +819,15 @@ a.contact-item:hover .icon-circle {
   padding: 0 4px;
 }
 
-.form-group textarea~label {
+.form-group textarea ~ label {
   top: 20px;
   transform: none;
 }
 
-.form-group input:focus~label,
-.form-group input:not(:placeholder-shown)~label {
-  top: 0;
-  transform: translateY(-50%);
-  font-size: 0.75rem;
-  color: var(--accent);
-}
-
-.form-group textarea:focus~label,
-.form-group textarea:not(:placeholder-shown)~label {
+.form-group input:focus ~ label,
+.form-group input:not(:placeholder-shown) ~ label,
+.form-group textarea:focus ~ label,
+.form-group textarea:not(:placeholder-shown) ~ label {
   top: 0;
   transform: translateY(-50%);
   font-size: 0.75rem;
@@ -900,7 +850,6 @@ a.contact-item:hover .icon-circle {
   border-color: #ff6b6b;
 }
 
-/* Toast */
 .toast {
   position: fixed;
   bottom: 40px;
@@ -915,20 +864,9 @@ a.contact-item:hover .icon-circle {
   color: var(--accent);
   font-weight: 500;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-  transform: translateY(120px);
-  opacity: 0;
-  transition: all var(--speed) var(--ease);
   z-index: 2000;
 }
 
-.toast.show {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-/* ============================================
-   FOOTER
-   ============================================ */
 .footer {
   padding: 40px 0;
   background: var(--bg-secondary);
@@ -994,9 +932,6 @@ a.contact-item:hover .icon-circle {
   transform: translateY(-3px);
 }
 
-/* ============================================
-   SCROLL REVEAL
-   ============================================ */
 .reveal {
   opacity: 0;
   transform: translateY(30px);
@@ -1008,20 +943,14 @@ a.contact-item:hover .icon-circle {
   transform: translateY(0);
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-@media (max-width:1024px) {
-  .projects-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
+@media (max-width: 1024px) {
+  .projects-grid,
   .skills-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width:768px) {
+@media (max-width: 768px) {
   .hamburger {
     display: flex;
   }
@@ -1033,6 +962,7 @@ a.contact-item:hover .icon-circle {
     width: 100%;
     background: var(--nav-bg);
     backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     flex-direction: column;
     align-items: center;
     padding: 32px 0;
@@ -1045,8 +975,15 @@ a.contact-item:hover .icon-circle {
     transform: translateY(0);
   }
 
-  .about-content {
+  .about-content,
+  .contact-wrapper,
+  .projects-grid,
+  .skills-grid {
     grid-template-columns: 1fr;
+  }
+
+  .about-content,
+  .hero-content {
     text-align: center;
   }
 
@@ -1054,32 +991,13 @@ a.contact-item:hover .icon-circle {
     margin: 0 auto;
   }
 
-  .about-stats {
-    justify-content: center;
-  }
-
-  .contact-wrapper {
-    grid-template-columns: 1fr;
-  }
-
-  .projects-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .skills-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .hero h1 {
-    font-size: 2.2rem;
-  }
-
+  .about-stats,
   .hero-buttons {
     justify-content: center;
   }
 
-  .hero-content {
-    text-align: center;
+  .hero h1 {
+    font-size: 2.2rem;
   }
 
   .hero-description {
@@ -1087,13 +1005,13 @@ a.contact-item:hover .icon-circle {
   }
 }
 
-@media (max-width:480px) {
-  .section-header h2 {
-    font-size: 1.6rem;
-  }
-
+@media (max-width: 480px) {
   :root {
     --section-pad: 60px 0;
+  }
+
+  .section-header h2 {
+    font-size: 1.6rem;
   }
 
   .btn {
