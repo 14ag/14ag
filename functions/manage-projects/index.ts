@@ -13,7 +13,7 @@ type ProjectPayload = {
 };
 
 const allowedIcons = new Set<ProjectIcon>(['file', 'pc', 'folder', 'net', 'camera']);
-const defaultAllowedOrigins = ['http://127.0.0.1:5174', 'http://localhost:5174'];
+const defaultAllowedOrigins = ['http://localhost:5174', 'http://127.0.0.1:5174'];
 
 function getAllowedOrigins() {
   const configuredOrigins = Deno.env.get('ADMIN_ALLOWED_ORIGINS');
@@ -33,7 +33,8 @@ function getAllowedOrigins() {
 function getCorsHeaders(req: Request) {
   const origin = req.headers.get('origin') || '';
   const allowedOrigins = getAllowedOrigins();
-  const allowOrigin = allowedOrigins.has(origin) ? origin : 'http://127.0.0.1:5174';
+  const fallbackOrigin = [...allowedOrigins][0] || 'http://localhost:5174';
+  const allowOrigin = allowedOrigins.has(origin) ? origin : fallbackOrigin;
 
   return {
     'Access-Control-Allow-Origin': allowOrigin,
