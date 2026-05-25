@@ -1,0 +1,2 @@
+[functions.manage-projects]
+verify_jwt = false
