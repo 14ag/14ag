@@ -31,6 +31,25 @@ class _SupabaseClient:
         return self._table
 
 
+def _projects_client(monkeypatch, rows=None, error: Exception | None = None) -> TestClient:
+    monkeypatch.setattr(
+        main,
+        "get_supabase_client",
+        lambda: _SupabaseClient(_ProjectsTable(rows, error)),
+    )
+    return TestClient(main.app)
+
+
+def _message_payload(**overrides):
+    payload = {
+        "name": "Sender",
+        "email": "sender@example.com",
+        "message_body": "Hello",
+    }
+    payload.update(overrides)
+    return payload
+
+
 @pytest.fixture(autouse=True)
 def clear_message_rate_limit() -> None:
     main._message_attempts.clear()
@@ -54,12 +73,7 @@ def test_frontend_origins_accept_empty_single_comma_and_json_values() -> None:
 
 
 def test_routes_still_work_with_loaded_app(monkeypatch) -> None:
-    monkeypatch.setattr(
-        main,
-        "get_supabase_client",
-        lambda: _SupabaseClient(_ProjectsTable()),
-    )
-    client = TestClient(main.app)
+    client = _projects_client(monkeypatch)
 
     assert client.get("/").json() == {"status": "ok"}
     assert client.get("/projects").status_code == 200
@@ -88,12 +102,7 @@ def test_projects_returns_normalized_supabase_rows(monkeypatch) -> None:
             },
         }
     ]
-    monkeypatch.setattr(
-        main,
-        "get_supabase_client",
-        lambda: _SupabaseClient(_ProjectsTable(rows)),
-    )
-    client = TestClient(main.app)
+    client = _projects_client(monkeypatch, rows)
 
     response = client.get("/projects")
 
@@ -126,12 +135,7 @@ def test_projects_sanitizes_unsafe_urls(monkeypatch) -> None:
             },
         }
     ]
-    monkeypatch.setattr(
-        main,
-        "get_supabase_client",
-        lambda: _SupabaseClient(_ProjectsTable(rows)),
-    )
-    client = TestClient(main.app)
+    client = _projects_client(monkeypatch, rows)
 
     response = client.get("/projects")
 
@@ -142,12 +146,7 @@ def test_projects_sanitizes_unsafe_urls(monkeypatch) -> None:
 
 
 def test_projects_returns_502_when_supabase_fails(monkeypatch) -> None:
-    monkeypatch.setattr(
-        main,
-        "get_supabase_client",
-        lambda: _SupabaseClient(_ProjectsTable(error=RuntimeError("network down"))),
-    )
-    client = TestClient(main.app)
+    client = _projects_client(monkeypatch, error=RuntimeError("network down"))
 
     response = client.get("/projects")
 
@@ -163,11 +162,7 @@ def test_message_keep_sync_requires_public_contact_email(monkeypatch) -> None:
 
     response = client.post(
         "/message",
-        json={
-            "name": "Sender",
-            "email": "sender@example.com",
-            "message_body": "Hello",
-        },
+        json=_message_payload(),
     )
 
     assert response.status_code == 200
@@ -235,11 +230,7 @@ def test_message_syncs_to_google_keep_when_configured(monkeypatch) -> None:
 
     response = client.post(
         "/message",
-        json={
-            "name": "Sender",
-            "email": "sender@example.com",
-            "message_body": "Hello",
-        },
+        json=_message_payload(),
     )
 
     assert response.status_code == 200
@@ -263,11 +254,7 @@ def test_message_rejects_oversized_payload() -> None:
 
     response = client.post(
         "/message",
-        json={
-            "name": "S" * 121,
-            "email": "sender@example.com",
-            "message_body": "Hello",
-        },
+        json=_message_payload(name="S" * 121),
     )
 
     assert response.status_code == 422
@@ -276,11 +263,7 @@ def test_message_rejects_oversized_payload() -> None:
 def test_message_rate_limit_blocks_repeated_messages(monkeypatch) -> None:
     monkeypatch.delenv("GKEEP_TOKEN", raising=False)
     client = TestClient(main.app)
-    payload = {
-        "name": "Sender",
-        "email": "sender@example.com",
-        "message_body": "Hello",
-    }
+    payload = _message_payload()
 
     for _ in range(main.MESSAGE_RATE_LIMIT_COUNT):
         assert client.post("/message", json=payload).status_code == 200
