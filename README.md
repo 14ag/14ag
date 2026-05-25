@@ -9,6 +9,14 @@ Local-only Svelte/Vite app for managing portfolio projects.
 - Delete selected projects after confirmation.
 - Call a local Node admin service. The service calls the Supabase Edge Function with the admin key, so the browser never stores Supabase admin credentials.
 
+## Security Model
+
+- This app is intended to run locally.
+- Browser code calls `/api/projects`; Vite proxies that path to the local Node admin service.
+- The local service sends `ADMIN_PROJECTS_KEY` to the Edge Function for writes.
+- Do not put `DB_SUPABASE_SECRET_KEY` or any Supabase secret key in browser-exposed variables.
+- Project links must use `http://` or `https://`. The UI validates new rows and normalizes rows read from Supabase.
+
 ## Prerequisites
 
 - Node.js 18 or newer.
@@ -48,11 +56,13 @@ Leave `PUBLIC_ADMIN_API_BASE_URL` empty for the Vite `/api` proxy, or set it to 
 
 ## Run
 
+Start the local service:
+
 ```powershell
 npm run admin:server
 ```
 
-In another terminal:
+In another terminal, start the UI:
 
 ```powershell
 npm run admin:ui
@@ -60,7 +70,7 @@ npm run admin:ui
 
 Default local URL: `http://127.0.0.1:5174`.
 
-From the repo root, the same commands are available:
+From the workspace root, the same commands are available:
 
 ```powershell
 npm run admin:server
@@ -93,10 +103,12 @@ npm run build
 npm test
 ```
 
+## Deployment
+
+Use the canonical deployment runbook in `../main/DEPLOYMENT.md` or the `main` branch `DEPLOYMENT.md`. The admin panel is not part of the public production surface; run it locally when project management is needed.
+
 ## Operating Notes
 
-- This app is local-only by design.
-- Do not put `DB_SUPABASE_SECRET_KEY` or any Supabase secret key in browser-exposed variables.
-- Browser code calls `/api/projects`; Vite proxies that path to the local Node admin service.
 - Categories are derived from existing project rows. Adding a project with a new category adds it to the list; deleting the last project in a category removes it from the list.
 - Tech stack input commits chips on comma or Enter and supports multi-word chips.
+- If create/delete returns `401`, confirm the local `ADMIN_PROJECTS_KEY` matches the Edge Function secret.
