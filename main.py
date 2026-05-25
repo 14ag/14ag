@@ -4,10 +4,11 @@ import json
 import logging
 import os
 import re
+import time
 from typing import Any
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from database import get_supabase_client
 
 try:
@@ -16,12 +17,15 @@ except Exception:  # pragma: no cover
     gkeepapi = None
 
 EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+MESSAGE_RATE_LIMIT_COUNT = 5
+MESSAGE_RATE_LIMIT_WINDOW_SECONDS = 60
 logger = logging.getLogger(__name__)
+_message_attempts: dict[str, list[float]] = {}
 
 class MessagePayload(BaseModel):
-    name: str
-    email: str
-    message_body: str
+    name: str = Field(max_length=120)
+    email: str = Field(max_length=254)
+    message_body: str = Field(max_length=5000)
 
 
 def _parse_frontend_origins(raw_origins: str | None) -> list[str]:
@@ -61,6 +65,40 @@ async def healthcheck() -> dict[str, str]:
     return {"status": "ok"}
 
 
+def _is_http_url(value: str) -> bool:
+    try:
+        from urllib.parse import urlparse
+
+        parsed = urlparse(value)
+    except Exception:
+        return False
+
+    return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
+
+
+def _safe_project_url(value: Any, fallback: str = "#") -> str:
+    url = str(value or "").strip()
+    return url if _is_http_url(url) else fallback
+
+
+def _check_message_rate_limit(key: str, now: float | None = None) -> bool:
+    current_time = time.monotonic() if now is None else now
+    window_start = current_time - MESSAGE_RATE_LIMIT_WINDOW_SECONDS
+    recent_attempts = [
+        timestamp
+        for timestamp in _message_attempts.get(key, [])
+        if timestamp > window_start
+    ]
+
+    if len(recent_attempts) >= MESSAGE_RATE_LIMIT_COUNT:
+        _message_attempts[key] = recent_attempts
+        return False
+
+    recent_attempts.append(current_time)
+    _message_attempts[key] = recent_attempts
+    return True
+
+
 def _normalize_projects(raw: Any) -> list[dict[str, Any]]:
     if isinstance(raw, list):
         candidates = raw
@@ -90,13 +128,13 @@ def _normalize_projects(raw: Any) -> list[dict[str, Any]]:
             "title": str(item.get("title") or "Untitled project"),
             "description": str(item.get("description") or "No description available."),
             "techs": [str(tech) for tech in techs],
-            "_url": str(item.get("_url") or item.get("url") or "#"),
+            "_url": _safe_project_url(item.get("_url") or item.get("url")),
             "category": str(item.get("category") or "other").lower(),
         }
 
         live_url = item.get("live_url") or item.get("demo_url")
-        if live_url:
-            project["live_url"] = str(live_url)
+        if live_url and _is_http_url(str(live_url).strip()):
+            project["live_url"] = str(live_url).strip()
 
         normalized.append(project)
 
@@ -117,7 +155,11 @@ async def get_projects() -> dict[str, list[dict[str, Any]]]:
 
 
 @app.post("/message")
-async def receive_message(payload: MessagePayload) -> dict[str, str]:
+async def receive_message(request: Request, payload: MessagePayload) -> dict[str, str]:
+    client_host = request.client.host if request.client else "unknown"
+    if not _check_message_rate_limit(client_host):
+        raise HTTPException(status_code=429, detail="Too many messages. Try again later.")
+
     if not payload.name.strip() or not payload.message_body.strip():
         raise HTTPException(status_code=400, detail="name and message_body are required")
 
