@@ -125,9 +125,9 @@ async def receive_message(payload: MessagePayload) -> dict[str, str]:
         raise HTTPException(status_code=400, detail="email must be valid")
 
     token = os.getenv("GKEEP_TOKEN", "").strip()
-    keep_email = os.getenv("GKEEP_EMAIL", "user@gmail.com").strip()
+    keep_email = os.getenv("PUBLIC_CONTACT_EMAIL", "").strip()
 
-    if not token or gkeepapi is None:
+    if not token or not keep_email or gkeepapi is None:
         return {
             "status": "accepted_fallback",
             "message": "Message accepted without Google Keep sync.",

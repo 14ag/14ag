@@ -116,3 +116,22 @@ def test_projects_returns_502_when_supabase_fails(monkeypatch) -> None:
 
     assert response.status_code == 502
     assert response.json() == {"detail": "Projects could not be loaded from Supabase."}
+
+
+def test_message_keep_sync_requires_public_contact_email(monkeypatch) -> None:
+    monkeypatch.setattr(main, "gkeepapi", object())
+    monkeypatch.setenv("GKEEP_TOKEN", "token")
+    monkeypatch.delenv("PUBLIC_CONTACT_EMAIL", raising=False)
+    client = TestClient(main.app)
+
+    response = client.post(
+        "/message",
+        json={
+            "name": "Sender",
+            "email": "sender@example.com",
+            "message_body": "Hello",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "accepted_fallback"
