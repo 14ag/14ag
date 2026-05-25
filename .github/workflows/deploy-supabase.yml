@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+      DB_URL: ${{ vars.DB_URL }}
       SUPABASE_WORKDIR: .
 
     steps:
@@ -28,11 +28,11 @@ jobs:
 
       - name: Resolve Supabase project ref
         run: |
-          project_ref="${SUPABASE_URL#https://}"
+          project_ref="${DB_URL#https://}"
           project_ref="${project_ref%%.supabase.co*}"
 
           if ! [[ "$project_ref" =~ ^[a-z0-9]{20}$ ]]; then
-            echo "SUPABASE_URL must look like https://<project-ref>.supabase.co"
+            echo "DB_URL must look like https://<project-ref>.supabase.co"
             exit 1
           fi
 

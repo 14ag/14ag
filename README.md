@@ -6,9 +6,9 @@ Supabase project assets for portfolio project management.
 
 - Supabase account and project.
 - Supabase CLI installed and logged in.
-- `SUPABASE_URL` from the Supabase project URL, `https://<project-ref>.supabase.co`.
+- `DB_URL` from the Supabase project URL, `https://<project-ref>.supabase.co`.
 - Generated admin shared secret. Generate one with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
-- Supabase service role or secret key from Supabase Dashboard, Settings, API Keys.
+- Supabase secret key from Supabase Dashboard, Settings, API Keys.
 
 Required Edge Function secrets:
 
@@ -16,8 +16,8 @@ Required Edge Function secrets:
 |---|---:|---|
 | `ADMIN_PROJECTS_KEY` | Yes | Generated admin shared secret; same value goes in local `admin/.env`. |
 | `ADMIN_ALLOWED_ORIGINS` | No | Admin UI origins. Local default: `http://127.0.0.1:5174,http://localhost:5174`. |
-| `SUPABASE_URL` | Yes | Supabase Dashboard project API URL, `https://<project-ref>.supabase.co`. |
-| `SUPABASE_SERVICE_ROLE_KEY` | Yes | Supabase Dashboard, Settings, API Keys. Keep server-side only. This is the canonical service key variable. |
+| `DB_URL` | Yes | Supabase Dashboard project API URL, `https://<project-ref>.supabase.co`. |
+| `DB_SUPABASE_SECRET_KEY` | Yes | Supabase Dashboard, Settings, API Keys. Keep server-side only. |
 
 Reference:
 
@@ -98,11 +98,11 @@ Example row:
 ```env
 ADMIN_PROJECTS_KEY=<generated-admin-secret>
 ADMIN_ALLOWED_ORIGINS=http://127.0.0.1:5174,http://localhost:5174
-SUPABASE_URL=https://<project-ref>.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=<service-role-or-secret-key>
+DB_URL=https://<project-ref>.supabase.co
+DB_SUPABASE_SECRET_KEY=<secret-key>
 ```
 
-Use `SUPABASE_SERVICE_ROLE_KEY` for the function service key.
+Use `DB_SUPABASE_SECRET_KEY` for the function database key.
 
 `ADMIN_ALLOWED_ORIGINS` is optional. If unset, the function allows `http://127.0.0.1:5174` and `http://localhost:5174`.
 
@@ -143,7 +143,7 @@ Add these GitHub repository settings before enabling it:
 | Name | Type | Where to get it |
 |---|---|
 | `SUPABASE_ACCESS_TOKEN` | Secret | Supabase Dashboard, Account, Access Tokens. |
-| `SUPABASE_URL` | Variable | Supabase project API URL, `https://<project-ref>.supabase.co`. |
+| `DB_URL` | Variable | Supabase project API URL, `https://<project-ref>.supabase.co`. |
 
 The workflow prepares the standard Supabase CLI layout in the runner by copying root `config.toml` and `functions/` into a temporary `supabase/` directory. It deploys only `manage-projects` with `supabase functions deploy manage-projects --no-verify-jwt`.
 

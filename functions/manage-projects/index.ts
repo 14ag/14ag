@@ -55,11 +55,11 @@ function json(req: Request, body: unknown, status = 200) {
 }
 
 function getSecretKey() {
-  return Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  return Deno.env.get('DB_SUPABASE_SECRET_KEY');
 }
 
 function getSupabaseClient() {
-  const supabaseUrl = Deno.env.get('SUPABASE_URL');
+  const supabaseUrl = Deno.env.get('DB_URL');
   const supabaseKey = getSecretKey();
 
   if (!supabaseUrl || !supabaseKey) {
