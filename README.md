@@ -6,7 +6,7 @@ FastAPI API for the portfolio.
 
 - `GET /` health check.
 - `GET /projects` reads Supabase `public.projects` and normalizes `project_metadata`.
-- `POST /message` validates contact messages and optionally syncs to Google Keep.
+- `POST /message` validates contact messages and optionally syncs to Google Keep
 - Returns `502` when Supabase project reads fail. Supabase is the project source of truth.
 
 ## Prerequisites
