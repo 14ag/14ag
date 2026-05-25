@@ -27,7 +27,7 @@
       : projects.filter((project) => project.category.toLowerCase() === activeFilter)
   );
 
-  function formatCategory(category: string) {
+  function formatPublicProjectCategory(category: string) {
     return category.charAt(0).toUpperCase() + category.slice(1);
   }
 </script>
@@ -60,7 +60,7 @@
           type="button"
           onclick={() => (activeFilter = category)}
         >
-          {formatCategory(category)}
+          {formatPublicProjectCategory(category)}
         </button>
       {/each}
     </div>
