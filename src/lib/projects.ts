@@ -11,6 +11,20 @@ function isRecord(value: unknown): value is UnknownRecord {
   return typeof value === 'object' && value !== null;
 }
 
+function isHttpUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function safeProjectUrl(value: unknown, fallback = '#'): string {
+  const url = String(value || '').trim();
+  return isHttpUrl(url) ? url : fallback;
+}
+
 function normalizeProject(item: unknown): ProjectRecord | null {
   if (!isRecord(item)) {
     return null;
@@ -40,9 +54,11 @@ function normalizeProject(item: unknown): ProjectRecord | null {
     title: String(metadata.title || 'Untitled project'),
     description: String(metadata.description || 'No description available.'),
     techs,
-    _url: String(metadata._url || metadata.url || '#'),
+    _url: safeProjectUrl(metadata._url || metadata.url),
     category: String(metadata.category || 'other').toLowerCase(),
-    ...(liveUrl ? { live_url: String(liveUrl) } : {})
+    ...(liveUrl && isHttpUrl(String(liveUrl).trim())
+      ? { live_url: String(liveUrl).trim() }
+      : {})
   };
 }
 

@@ -381,10 +381,10 @@
             </div>
 
             <div class="project-links">
-              <a href={project._url} target="_blank" rel="noopener">Code</a>
+              <a href={project._url} target="_blank" rel="noopener noreferrer">Code</a>
 
               {#if project.live_url}
-                <a href={project.live_url} target="_blank" rel="noopener">Release</a>
+                <a href={project.live_url} target="_blank" rel="noopener noreferrer">Release</a>
               {/if}
             </div>
           </article>
