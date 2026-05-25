@@ -7,7 +7,7 @@ Supabase project assets for portfolio project management.
 - Define the `public.projects` table shape used by the portfolio.
 - Deploy `functions/manage-projects`.
 - Keep service-role database access inside Supabase Edge Function secrets.
-- Provide admin project reads, creates, and deletes for the local admin panel.
+- Provide admin project reads, creates, updates, and deletes for the local admin panel.
 
 ## Prerequisites
 
@@ -93,6 +93,7 @@ Project URLs must use `http://` or `https://`. The Edge Function validates write
 
 - `GET` - returns `{ projects, categories }`.
 - `POST` - inserts `{ project_metadata: project }`; requires `x-admin-key`.
+- `PATCH` - updates one project by `{ id, project }`; requires `x-admin-key`.
 - `DELETE` - deletes rows by `{ ids: number[] }`; requires `x-admin-key`.
 - `OPTIONS` - handles browser CORS preflight.
 
@@ -186,6 +187,15 @@ curl --request POST https://<project-ref>.supabase.co/functions/v1/manage-projec
 ```
 
 Delete the test row through the admin panel after the smoke test.
+
+Verify authorized update:
+
+```sh
+curl --request PATCH https://<project-ref>.supabase.co/functions/v1/manage-projects \
+  --header "Content-Type: application/json" \
+  --header "x-admin-key: <generated-admin-secret>" \
+  --data '{"id":1,"project":{"icon":"folder","title":"Updated","description":"Updated project","techs":["test"],"_url":"https://github.com/example/temp","category":"test"}}'
+```
 
 ## Deployment
 

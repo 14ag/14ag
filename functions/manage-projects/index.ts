@@ -39,7 +39,7 @@ function getCorsHeaders(req: Request) {
   return {
     'Access-Control-Allow-Origin': allowOrigin,
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-admin-key',
-    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
     'Vary': 'Origin'
   };
 }
@@ -229,6 +229,49 @@ async function createProject(req: Request) {
   return json(req, { project: normalizeRow(result.data) }, 201);
 }
 
+async function updateProject(req: Request) {
+  const authError = requireAdmin(req);
+
+  if (authError) {
+    return json(req, { error: authError }, 401);
+  }
+
+  const body = await req.json().catch(() => null);
+  const id =
+    body && typeof body === 'object' && 'id' in body
+      ? Number((body as Record<string, unknown>).id)
+      : NaN;
+  const input =
+    body && typeof body === 'object' && 'project' in body
+      ? (body as Record<string, unknown>).project
+      : null;
+
+  if (!Number.isInteger(id) || id < 0) {
+    return json(req, { error: 'id must be a valid row ID.' }, 400);
+  }
+
+  const { project, error } = validateProject(input);
+
+  if (!project) {
+    return json(req, { error }, 400);
+  }
+
+  const supabase = getSupabaseClient();
+  const result = await supabase
+    .from('projects')
+    .update({ project_metadata: project })
+    .eq('id', id)
+    .select('id, project_metadata')
+    .single();
+
+  if (result.error) {
+    const status = result.error.code === 'PGRST116' ? 404 : 500;
+    return json(req, { error: result.error.message }, status);
+  }
+
+  return json(req, { project: normalizeRow(result.data) });
+}
+
 async function deleteProjects(req: Request) {
   const authError = requireAdmin(req);
 
@@ -273,6 +316,10 @@ Deno.serve(async (req) => {
 
     if (req.method === 'POST') {
       return await createProject(req);
+    }
+
+    if (req.method === 'PATCH') {
+      return await updateProject(req);
     }
 
     if (req.method === 'DELETE') {
