@@ -36,7 +36,7 @@ Required `backend/.env` values:
 | `DB_URL` | Yes | Supabase Dashboard project API URL, `https://<project-ref>.supabase.co`. |
 | `SUPABASE_KEY` | Yes | Supabase publishable key with read access to `public.projects`. |
 | `FRONTEND_URL` | Yes | Frontend origin, such as `http://localhost:5173` or deployed site URL. |
-| `PUBLIC_CONTACT_EMAIL` | Yes | Contact email shown on the frontend and used as the optional Google Keep account email. |
+| `PUBLIC_CONTACT_EMAIL` | Yes | Account email used for optional Google Keep sync. |
 | `GKEEP_TOKEN` | No | Optional token from your `gkeepapi` auth workflow. |
 
 ## Setup
