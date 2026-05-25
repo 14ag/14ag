@@ -1,4 +1,5 @@
 .venv/
+.vercel/
 launcher.bat
 auth/
 experiments.ipynb
