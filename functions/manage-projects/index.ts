@@ -55,20 +55,7 @@ function json(req: Request, body: unknown, status = 200) {
 }
 
 function getSecretKey() {
-  const secretKeys = Deno.env.get('SUPABASE_SECRET_KEYS');
-
-  if (secretKeys) {
-    try {
-      const parsed = JSON.parse(secretKeys) as Record<string, string | undefined>;
-      if (parsed.default) {
-        return parsed.default;
-      }
-    } catch {
-      // Fall through to legacy env names.
-    }
-  }
-
-  return Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || Deno.env.get('SUPABASE_SECRET_KEY');
+  return Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 }
 
 function getSupabaseClient() {

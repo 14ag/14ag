@@ -2,6 +2,29 @@
 
 Supabase project assets for portfolio project management.
 
+## Prerequisites
+
+- Supabase account and project.
+- Supabase CLI installed and logged in.
+- `SUPABASE_URL` from the Supabase project URL, `https://<project-ref>.supabase.co`.
+- `SUPABASE_URL` for GitHub Actions and Supabase CLI. This is the `<project-ref>` part of `SUPABASE_URL`.
+- Generated admin shared secret. Generate one with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
+- Supabase service role or secret key from Supabase Dashboard, Settings, API Keys.
+
+Required Edge Function secrets:
+
+| Secret | Required | Where to get it |
+|---|---:|---|
+| `ADMIN_PROJECTS_KEY` | Yes | Generated admin shared secret; same value goes in local `admin/.env`. |
+| `ADMIN_ALLOWED_ORIGINS` | No | Admin UI origins. Local default: `http://127.0.0.1:5174,http://localhost:5174`. |
+| `SUPABASE_URL` | Yes | Supabase Dashboard project API URL, `https://<project-ref>.supabase.co`. |
+| `SUPABASE_SERVICE_ROLE_KEY` | Yes | Supabase Dashboard, Settings, API Keys. Keep server-side only. This is the canonical service key variable. |
+
+Reference:
+
+- Supabase API keys: https://supabase.com/docs/guides/getting-started/api-keys
+- Supabase Edge Function secrets: https://supabase.com/docs/guides/functions/secrets
+
 ## Table Shape
 
 The frontend and admin read project rows from `public.projects`. Supabase is the only project source of truth.
@@ -74,13 +97,13 @@ Example row:
 ## Required Secrets
 
 ```env
-ADMIN_PROJECTS_KEY=change-me
+ADMIN_PROJECTS_KEY=<generated-admin-secret>
 ADMIN_ALLOWED_ORIGINS=http://127.0.0.1:5174,http://localhost:5174
-SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=service-role-key
+SUPABASE_URL=https://<project-ref>.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=<service-role-or-secret-key>
 ```
 
-The function also supports `SUPABASE_SECRET_KEY` or `SUPABASE_SECRET_KEYS` with a `default` value.
+Use `SUPABASE_SERVICE_ROLE_KEY` for the function service key.
 
 `ADMIN_ALLOWED_ORIGINS` is optional. If unset, the function allows `http://127.0.0.1:5174` and `http://localhost:5174`.
 
@@ -108,8 +131,23 @@ verify_jwt = false
 Deploy command option:
 
 ```sh
-supabase functions deploy manage-projects --project-ref YOUR_PROJECT_REF --no-verify-jwt
+supabase functions deploy manage-projects --project-ref <project-ref> --no-verify-jwt
 ```
+
+## GitHub Deployment
+
+The Supabase repository includes `.github/workflows/deploy-supabase.yml`. It is intended for this repo's GitHub `supabase` branch.
+
+Add these GitHub repository secrets before enabling it:
+
+| Secret | Where to get it |
+|---|---|
+| `SUPABASE_ACCESS_TOKEN` | Supabase Dashboard, Account, Access Tokens. |
+| `SUPABASE_URL` | The `<project-ref>` part of `SUPABASE_URL`. |
+
+The workflow deploys only `manage-projects` with `supabase functions deploy manage-projects --no-verify-jwt`.
+
+Set Edge Function secrets separately with Supabase Dashboard secrets or `supabase secrets set`.
 
 Local serve option:
 
@@ -120,13 +158,13 @@ supabase functions serve manage-projects --no-verify-jwt
 ## Smoke Tests
 
 ```sh
-curl https://YOUR_PROJECT_REF.supabase.co/functions/v1/manage-projects
+curl https://<project-ref>.supabase.co/functions/v1/manage-projects
 ```
 
 ```sh
-curl --request POST https://YOUR_PROJECT_REF.supabase.co/functions/v1/manage-projects \
+curl --request POST https://<project-ref>.supabase.co/functions/v1/manage-projects \
   --header "Content-Type: application/json" \
-  --header "x-admin-key: YOUR_ADMIN_PROJECTS_KEY" \
+  --header "x-admin-key: <generated-admin-secret>" \
   --data '{"project":{"icon":"folder","title":"Temp","description":"Temp project","techs":["test"],"_url":"https://github.com/example/temp","category":"test"}}'
 ```
 
