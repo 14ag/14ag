@@ -3,6 +3,12 @@
    ============================================ */
 
 document.addEventListener("DOMContentLoaded", () => {
+  const API_BASE_URL = (
+    window.API_BASE_URL ||
+    document.querySelector('meta[name="api-base-url"]')?.content ||
+    "http://127.0.0.1:8000"
+  ).replace(/\/$/, "");
+
   /* ---------- Theme Toggle ---------- */
   const themeCheckbox = document.getElementById("theme-toggle");
   const savedTheme = localStorage.getItem("theme") || "dark";
