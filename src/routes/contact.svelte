@@ -1,7 +1,7 @@
 <script>
   import { env } from '$env/dynamic/public';
 
-  const contactEmail = env.PUBLIC_CONTACT_EMAIL || 'muriukipn@gmail.com';
+  const contactEmail = env.PUBLIC_CONTACT_EMAIL;
 </script>
 
   <!-- ===== CONTACT ===== -->

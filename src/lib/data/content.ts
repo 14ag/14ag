@@ -1,7 +1,7 @@
 import { env } from '$env/dynamic/public';
 import type { AboutStat, ContactChannel, NavLink, SkillCategory } from '$lib/types';
 
-const contactEmail = env.PUBLIC_CONTACT_EMAIL || 'muriukipn@gmail.com';
+const contactEmail = env.PUBLIC_CONTACT_EMAIL;
 
 export const navLinks: NavLink[] = [
   { id: 'home', label: 'Home' },
