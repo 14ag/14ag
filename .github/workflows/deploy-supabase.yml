@@ -39,7 +39,7 @@ jobs:
           echo "SUPABASE_PROJECT_REF=$project_ref" >> "$GITHUB_ENV"
 
       - name: Link Supabase project
-        run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
+        run: supabase --workdir . link --project-ref "$SUPABASE_PROJECT_REF"
 
       - name: Deploy manage-projects function
-        run: supabase functions deploy manage-projects --project-ref "$SUPABASE_PROJECT_REF" --no-verify-jwt
+        run: supabase --workdir . functions deploy manage-projects --project-ref "$SUPABASE_PROJECT_REF" --no-verify-jwt

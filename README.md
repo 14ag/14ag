@@ -144,7 +144,7 @@ Add these GitHub repository settings before enabling it:
 | `SUPABASE_ACCESS_TOKEN` | Secret | Supabase Dashboard, Account, Access Tokens. |
 | `SUPABASE_URL` | Variable | Supabase project API URL, `https://<project-ref>.supabase.co`. |
 
-The workflow sets `SUPABASE_WORKDIR=.` because this repository keeps `config.toml` and `functions/` at the repo root. It deploys only `manage-projects` with `supabase functions deploy manage-projects --no-verify-jwt`.
+The workflow uses `supabase --workdir .` because this repository keeps `config.toml` and `functions/` at the repo root. It deploys only `manage-projects` with `supabase functions deploy manage-projects --no-verify-jwt`.
 
 Set Edge Function secrets separately with Supabase Dashboard secrets or `supabase secrets set`.
 
