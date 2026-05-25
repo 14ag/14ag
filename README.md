@@ -7,7 +7,7 @@ FastAPI API for the portfolio.
 - `GET /` health check.
 - `GET /projects` reads Supabase `public.projects` and normalizes `project_metadata`.
 - `POST /message` validates contact messages and optionally syncs to Google Keep.
-- Falls back to `backend/data.json` when Supabase project reads fail.
+- Returns `502` when Supabase project reads fail. Supabase is the project source of truth.
 
 ## Setup
 
@@ -44,4 +44,4 @@ python -m pytest
 ## Notes
 
 - Keep write operations out of the public backend. Admin writes go through the Supabase Edge Function.
-- If `/projects` returns fallback data, check Supabase credentials, RLS read policy, and network access.
+- If `/projects` returns `502`, check Supabase credentials, RLS read policy, network access, and the `projects` table schema.

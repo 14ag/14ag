@@ -4,7 +4,6 @@ import json
 import logging
 import os
 import re
-from pathlib import Path
 from typing import Any
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -16,7 +15,6 @@ try:
 except Exception:  # pragma: no cover
     gkeepapi = None
 
-DATA_FILE = Path(__file__).resolve().parent / "data.json"
 EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 logger = logging.getLogger(__name__)
 
@@ -61,20 +59,6 @@ app.add_middleware(
 @app.get("/")
 async def healthcheck() -> dict[str, str]:
     return {"status": "ok"}
-
-
-def _read_json_file() -> Any:
-    if not DATA_FILE.exists():
-        return []
-
-    raw = DATA_FILE.read_text(encoding="utf-8").strip()
-    if not raw:
-        return []
-
-    try:
-        return json.loads(raw)
-    except json.JSONDecodeError:
-        return []
 
 
 def _normalize_projects(raw: Any) -> list[dict[str, Any]]:
@@ -125,8 +109,11 @@ async def get_projects() -> dict[str, list[dict[str, Any]]]:
         response = get_supabase_client().table("projects").select("*").execute()
         return {"projects": _normalize_projects(response.data)}
     except Exception as exc:
-        logger.warning("Supabase projects query failed; using data.json fallback: %s", exc)
-        return {"projects": _normalize_projects(_read_json_file())}
+        logger.error("Supabase projects query failed: %s", exc)
+        raise HTTPException(
+            status_code=502,
+            detail="Projects could not be loaded from Supabase.",
+        ) from exc
 
 
 @app.post("/message")
