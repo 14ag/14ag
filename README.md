@@ -6,12 +6,23 @@ FastAPI API for the portfolio.
 
 - `GET /` health check.
 - `GET /projects` reads Supabase `public.projects` and normalizes `project_metadata`.
-- `POST /message` validates contact messages and optionally syncs to Google Keep
-- Returns `502` when Supabase project reads fail. Supabase is the project source of truth.
+- `POST /message` validates contact messages and optionally syncs to Google Keep.
+- Returns `502` when Supabase project reads fail.
+
+Supabase is the project source of truth. Public write operations do not belong in this backend; admin writes go through the Supabase Edge Function.
+
+## Runtime Behavior
+
+- Project `_url`, `url`, `live_url`, and `demo_url` values must use `http://` or `https://`.
+- Unsafe project code links fall back to `#`.
+- Unsafe live/demo links are omitted from the response.
+- Contact messages enforce required fields, email format, max lengths, and an in-memory per-client rate limit of 5 accepted attempts per 60 seconds.
+- If `GKEEP_TOKEN`, `PUBLIC_CONTACT_EMAIL`, or `gkeepapi` is unavailable, messages are still accepted without Google Keep sync.
 
 ## Prerequisites
 
 - Python 3.13 or compatible Python 3 runtime.
+- Dependencies installed from the workspace `requirements.txt`.
 - Supabase `public.projects` table already migrated.
 - Supabase project URL from Supabase Dashboard, Project Settings, API or Connect dialog.
 - Supabase publishable key from Supabase Dashboard, Settings, API Keys.
@@ -42,7 +53,7 @@ Create `backend/.env`:
 DB_URL=https://<project-ref>.supabase.co
 SUPABASE_KEY=<publishable-key>
 FRONTEND_URL=["http://localhost:5173","http://127.0.0.1:5173"]
-PUBLIC_CONTACT_EMAIL=muriukipn@gmail.com
+PUBLIC_CONTACT_EMAIL=you@example.com
 GKEEP_TOKEN=optional-google-keep-token
 ```
 
@@ -60,7 +71,12 @@ python -m uvicorn main:app --host 127.0.0.1 --port 8000
 python -m pytest
 ```
 
-## Notes
+## Deployment
 
-- Keep write operations out of the public backend. Admin writes go through the Supabase Edge Function.
+Use the canonical deployment runbook in `../main/DEPLOYMENT.md` or the `main` branch `DEPLOYMENT.md`. The backend section covers environment variables, smoke checks, and rollback.
+
+## Troubleshooting
+
 - If `/projects` returns `502`, check Supabase credentials, RLS read policy, network access, and the `projects` table schema.
+- If `/message` returns `429`, wait for the rate-limit window to expire or restart the backend in local development.
+- If Google Keep sync does not happen, verify `GKEEP_TOKEN`, `PUBLIC_CONTACT_EMAIL`, and the `gkeepapi` dependency.
