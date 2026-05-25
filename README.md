@@ -122,10 +122,14 @@ Disable Supabase platform JWT verification for `manage-projects`. The function u
 The repository includes this config in `supabase/config.toml`:
 
 ```toml
+project_id = "user-portfolio"
+
 [functions.manage-projects]
 verify_jwt = false
 entrypoint = "./functions/manage-projects/index.ts"
 ```
+
+The Supabase local state folders `.branches/` and `.temp/` are ignored by `.gitignore`.
 
 Deploy command:
 
