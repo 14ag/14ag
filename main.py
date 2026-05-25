@@ -9,6 +9,7 @@ from typing import Any
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from database import get_supabase_client
 
 try:
     import gkeepapi  # type: ignore
@@ -90,6 +91,9 @@ def _normalize_projects(raw: Any) -> list[dict[str, Any]]:
         if not isinstance(item, dict):
             continue
 
+        if isinstance(item.get("project_metadata"), dict):
+            item = item["project_metadata"]
+
         techs = item.get("techs", [])
         if isinstance(techs, str):
             techs = [techs]
@@ -116,7 +120,11 @@ def _normalize_projects(raw: Any) -> list[dict[str, Any]]:
 
 @app.get("/projects")
 async def get_projects() -> dict[str, list[dict[str, Any]]]:
-    return {"projects": _normalize_projects(_read_json_file())}
+    try:
+        response = get_supabase_client().table("projects").select("*").execute()
+        return {"projects": _normalize_projects(response.data)}
+    except Exception:
+        return {"projects": _normalize_projects(_read_json_file())}
 
 
 @app.post("/message")
