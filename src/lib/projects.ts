@@ -4,8 +4,8 @@ type UnknownRecord = Record<string, unknown>;
 
 export const projectIcons: ProjectIcon[] = ['file', 'pc', 'folder', 'net', 'camera'];
 
-const functionUrl = (import.meta.env.PUBLIC_PROJECTS_FUNCTION_URL || '').replace(/\/$/, '');
-const adminKey = import.meta.env.PUBLIC_ADMIN_PROJECTS_KEY || '';
+const adminApiBaseUrl = (import.meta.env.PUBLIC_ADMIN_API_BASE_URL || '').replace(/\/$/, '');
+const projectsUrl = `${adminApiBaseUrl}/api/projects`;
 
 function isRecord(value: unknown): value is UnknownRecord {
   return typeof value === 'object' && value !== null;
@@ -53,19 +53,11 @@ function deriveCategories(projects: ProjectRecord[]): string[] {
 }
 
 async function request<T>(method: 'GET' | 'POST' | 'DELETE', body?: unknown): Promise<T> {
-  if (!functionUrl) {
-    throw new Error('PUBLIC_PROJECTS_FUNCTION_URL is not configured.');
-  }
-
   const headers: Record<string, string> = {
     'Content-Type': 'application/json'
   };
 
-  if (method !== 'GET') {
-    headers['x-admin-key'] = adminKey;
-  }
-
-  const response = await fetch(functionUrl, {
+  const response = await fetch(projectsUrl, {
     method,
     headers,
     ...(body ? { body: JSON.stringify(body) } : {})
