@@ -1,7 +1,7 @@
 from __future__ import annotations
-from supabase import create_client, Client
-from dotenv import load_dotenv, dotenv_values
+from dotenv import load_dotenv
 import json
+import logging
 import os
 import re
 from pathlib import Path
@@ -18,6 +18,7 @@ except Exception:  # pragma: no cover
 
 DATA_FILE = Path(__file__).resolve().parent / "data.json"
 EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+logger = logging.getLogger(__name__)
 
 class MessagePayload(BaseModel):
     name: str
@@ -123,7 +124,8 @@ async def get_projects() -> dict[str, list[dict[str, Any]]]:
     try:
         response = get_supabase_client().table("projects").select("*").execute()
         return {"projects": _normalize_projects(response.data)}
-    except Exception:
+    except Exception as exc:
+        logger.warning("Supabase projects query failed; using data.json fallback: %s", exc)
         return {"projects": _normalize_projects(_read_json_file())}
 
 
