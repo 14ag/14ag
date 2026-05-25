@@ -71,7 +71,7 @@
       {:else if projects.length === 0}
         <p class="project-feedback">Projects will appear here soon.</p>
       {:else}
-        {#each filteredProjects as project (project.title + project._url)}
+        {#each filteredProjects as project, index (`${project.title}:${project._url}:${project.category}:${index}`)}
           <div animate:flip in:fly={{ y: 20, duration: 250 }} out:fly={{ y: 20, duration: 200 }}>
             <ProjectCard {project} />
           </div>
