@@ -2,6 +2,13 @@
 
 Supabase project assets for portfolio project management.
 
+## Responsibilities
+
+- Define the `public.projects` table shape used by the portfolio.
+- Deploy `functions/manage-projects`.
+- Keep service-role database access inside Supabase Edge Function secrets.
+- Provide admin project reads, creates, and deletes for the local admin panel.
+
 ## Prerequisites
 
 - Supabase account and project.
@@ -68,15 +75,17 @@ Example row:
   "id": 0,
   "project_metadata": {
     "icon": "pc",
-    "title": "title",
-    "description": "description",
-    "techs": ["techs1", "techs2"],
+    "title": "Project name",
+    "description": "Project summary.",
+    "techs": ["Python", "Svelte"],
     "_url": "https://github.com/example/repo",
     "live_url": "https://example.com/release",
-    "category": "category"
+    "category": "web"
   }
 }
 ```
+
+Project URLs must use `http://` or `https://`. The Edge Function validates writes and sanitizes returned rows.
 
 ## Edge Function
 
@@ -100,14 +109,10 @@ Use `DB_SUPABASE_SECRET_KEY` for the function database key.
 
 `ADMIN_ALLOWED_ORIGINS` is optional. If unset, the function allows `http://127.0.0.1:5174` and `http://localhost:5174`.
 
-Hosted admin CORS examples:
+Hosted admin CORS example:
 
 ```env
-ADMIN_ALLOWED_ORIGINS=https://your-site.netlify.app,https://your-custom-domain.com
-```
-
-```env
-ADMIN_ALLOWED_ORIGINS=https://your-project.vercel.app,https://your-custom-domain.com
+ADMIN_ALLOWED_ORIGINS=https://your-admin-origin.example
 ```
 
 ## JWT Verification
@@ -122,7 +127,7 @@ verify_jwt = false
 entrypoint = "./functions/manage-projects/index.ts"
 ```
 
-Deploy command option:
+Deploy command:
 
 ```sh
 supabase functions deploy manage-projects --project-ref <project-ref> --no-verify-jwt
@@ -135,7 +140,7 @@ The Supabase repository includes `.github/workflows/deploy-supabase.yml`. It is 
 Add these GitHub repository settings before enabling it:
 
 | Name | Type | Where to get it |
-|---|---|
+|---|---|---|
 | `SUPABASE_ACCESS_TOKEN` | Secret | Supabase Dashboard, Account, Access Tokens. |
 | `DB_URL` | Variable | Supabase project API URL, `https://<project-ref>.supabase.co`. |
 
@@ -151,9 +156,23 @@ supabase functions serve manage-projects --no-verify-jwt
 
 ## Smoke Tests
 
+Verify reads:
+
 ```sh
 curl https://<project-ref>.supabase.co/functions/v1/manage-projects
 ```
+
+Verify writes reject missing admin key:
+
+```sh
+curl --request DELETE https://<project-ref>.supabase.co/functions/v1/manage-projects \
+  --header "Content-Type: application/json" \
+  --data '{"ids":[0]}'
+```
+
+Expected result: `401`.
+
+Verify authorized insert:
 
 ```sh
 curl --request POST https://<project-ref>.supabase.co/functions/v1/manage-projects \
@@ -163,3 +182,7 @@ curl --request POST https://<project-ref>.supabase.co/functions/v1/manage-projec
 ```
 
 Delete the test row through the admin panel after the smoke test.
+
+## Deployment
+
+Use the canonical deployment runbook in `../main/DEPLOYMENT.md` or the `main` branch `DEPLOYMENT.md` for full deployment order, smoke checks, rollback, and troubleshooting.
