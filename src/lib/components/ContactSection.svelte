@@ -88,7 +88,12 @@
         throw new Error(`Message request failed: ${response.status}`);
       }
 
-      await response.json();
+      const result = (await response.json()) as { status?: string };
+
+      if (result.status !== 'success') {
+        throw new Error(result.status || 'Message sync failed.');
+      }
+
       resetForm();
       showToast('Your message has been sent.');
     } catch {
