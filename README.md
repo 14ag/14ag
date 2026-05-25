@@ -4,9 +4,10 @@ Public SvelteKit portfolio site.
 
 ## Responsibilities
 
-- Loads project cards from the backend `GET /projects`.
+- Loads project cards from backend `GET /projects`.
 - Renders project filters, skills, about, and contact sections.
-- Sends contact messages to the backend.
+- Sends contact messages to backend `POST /message`.
+- Normalizes project links before rendering so only `http://` and `https://` URLs become external links.
 
 ## Prerequisites
 
@@ -32,7 +33,7 @@ Create `frontend/.env`:
 
 ```env
 API_BASE_URL=http://127.0.0.1:8000
-PUBLIC_CONTACT_EMAIL=muriukipn@gmail.com
+PUBLIC_CONTACT_EMAIL=you@example.com
 ```
 
 If `API_BASE_URL` is missing, the app uses `http://127.0.0.1:8000`.
@@ -64,3 +65,5 @@ npm run build
 ```
 
 The app uses `@sveltejs/adapter-auto`; choose a SvelteKit adapter if the target host needs one.
+
+Use the canonical deployment runbook in `../main/DEPLOYMENT.md` or the `main` branch `DEPLOYMENT.md` for full deployment order, smoke checks, and rollback.
