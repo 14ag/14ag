@@ -107,6 +107,15 @@ npm test
 
 Use the canonical deployment runbook in `../main/DEPLOYMENT.md` or the `main` branch `DEPLOYMENT.md`. The admin panel is not part of the public production surface; run it locally when project management is needed.
 
+The repo includes static-host config for preview builds:
+
+| Host | Config file | Output |
+|---|---|---|
+| Netlify | `netlify.toml` | `dist` |
+| Vercel | `vercel.json` | `dist` |
+
+Hosted previews still need `PUBLIC_ADMIN_API_BASE_URL` pointed at an admin service that can safely hold `ADMIN_PROJECTS_KEY`; do not expose the key in browser variables.
+
 ## Operating Notes
 
 - Categories are derived from existing project rows. Adding a project with a new category adds it to the list; deleting the last project in a category removes it from the list.
