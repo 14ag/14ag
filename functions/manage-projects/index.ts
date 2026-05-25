@@ -155,6 +155,8 @@ function normalizeRow(row: Record<string, unknown>) {
     row.project_metadata && typeof row.project_metadata === 'object'
       ? (row.project_metadata as Record<string, unknown>)
       : row;
+  const codeUrl = cleanString(metadata._url || metadata.url);
+  const liveUrl = cleanString(metadata.live_url || metadata.demo_url);
 
   return {
     id: Number(row.id),
@@ -164,10 +166,8 @@ function normalizeRow(row: Record<string, unknown>) {
     techs: Array.isArray(metadata.techs)
       ? metadata.techs.map((tech) => cleanString(tech)).filter(Boolean)
       : [],
-    _url: cleanString(metadata._url || metadata.url) || '#',
-    ...(cleanString(metadata.live_url || metadata.demo_url)
-      ? { live_url: cleanString(metadata.live_url || metadata.demo_url) }
-      : {}),
+    _url: isHttpUrl(codeUrl) ? codeUrl : '#',
+    ...(liveUrl && isHttpUrl(liveUrl) ? { live_url: liveUrl } : {}),
     category: cleanString(metadata.category).toLowerCase() || 'other'
   };
 }
