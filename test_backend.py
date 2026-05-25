@@ -174,6 +174,90 @@ def test_message_keep_sync_requires_public_contact_email(monkeypatch) -> None:
     assert response.json()["status"] == "accepted_fallback"
 
 
+def test_message_syncs_to_google_keep_when_configured(monkeypatch) -> None:
+    class _Labels:
+        def __init__(self) -> None:
+            self.added = []
+
+        def add(self, label) -> None:
+            self.added.append(label)
+
+    class _Note:
+        def __init__(self) -> None:
+            self.labels = _Labels()
+            self.pinned = False
+            self.color = None
+
+    class _Keep:
+        instance = None
+
+        def __init__(self) -> None:
+            self.authenticated = None
+            self.created_note = None
+            self.created_label = None
+            self.synced = False
+            _Keep.instance = self
+
+        def authenticate(self, email: str, token: str) -> None:
+            self.authenticated = (email, token)
+
+        def findLabel(self, name: str):
+            return None
+
+        def createLabel(self, name: str):
+            self.created_label = name
+            return {"name": name}
+
+        def createNote(self, title: str, body: str):
+            self.created_note = (title, body, _Note())
+            return self.created_note[2]
+
+        def sync(self) -> None:
+            self.synced = True
+
+    fake_gkeepapi = type(
+        "FakeGKeepApi",
+        (),
+        {
+            "Keep": _Keep,
+            "node": type(
+                "Node",
+                (),
+                {"ColorValue": type("ColorValue", (), {"Teal": "teal"})},
+            ),
+        },
+    )
+
+    monkeypatch.setattr(main, "gkeepapi", fake_gkeepapi)
+    monkeypatch.setenv("GKEEP_TOKEN", "token")
+    monkeypatch.setenv("PUBLIC_CONTACT_EMAIL", "owner@example.com")
+    client = TestClient(main.app)
+
+    response = client.post(
+        "/message",
+        json={
+            "name": "Sender",
+            "email": "sender@example.com",
+            "message_body": "Hello",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "status": "success",
+        "message": "Message saved to Google Keep.",
+    }
+    keep = _Keep.instance
+    assert keep.authenticated == ("owner@example.com", "token")
+    assert keep.created_note[0] == "Sender"
+    assert "Email: sender@example.com" in keep.created_note[1]
+    assert keep.created_label == "portfolio messages"
+    assert keep.created_note[2].labels.added == [{"name": "portfolio messages"}]
+    assert keep.created_note[2].pinned is True
+    assert keep.created_note[2].color == "teal"
+    assert keep.synced is True
+
+
 def test_message_rejects_oversized_payload() -> None:
     client = TestClient(main.app)
 
