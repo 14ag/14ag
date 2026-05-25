@@ -125,6 +125,7 @@ The repository includes this config in `supabase/config.toml`:
 ```toml
 [functions.manage-projects]
 verify_jwt = false
+entrypoint = "./functions/manage-projects/index.ts"
 ```
 
 Deploy command option:

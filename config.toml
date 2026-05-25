@@ -1,2 +1,3 @@
 [functions.manage-projects]
 verify_jwt = false
+entrypoint = "./functions/manage-projects/index.ts"
