@@ -68,7 +68,7 @@ function deriveCategories(projects: ProjectRecord[]): string[] {
   );
 }
 
-async function request<T>(method: 'GET' | 'POST' | 'DELETE', body?: unknown): Promise<T> {
+async function request<T>(method: 'GET' | 'POST' | 'PATCH' | 'DELETE', body?: unknown): Promise<T> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json'
   };
@@ -113,6 +113,10 @@ export async function fetchProjects(): Promise<ProjectsResponse> {
 
 export async function createProject(project: ProjectForm): Promise<void> {
   await request('POST', { project });
+}
+
+export async function updateProject(id: number, project: ProjectForm): Promise<void> {
+  await request('PATCH', { id, project });
 }
 
 export async function deleteProjects(ids: number[]): Promise<void> {

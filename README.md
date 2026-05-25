@@ -5,7 +5,7 @@ Local-only Svelte/Vite app for managing portfolio projects.
 ## Responsibilities
 
 - Display project cards using the same design language as the public frontend.
-- Add projects through a form with icon, category, URL, and tech-chip inputs.
+- Add and edit projects through a form with icon, category, URL, and tech-chip inputs.
 - Delete selected projects after confirmation.
 - Call a local Node admin service. The service calls the Supabase Edge Function with the admin key, so the browser never stores Supabase admin credentials.
 
@@ -77,24 +77,6 @@ npm run admin:server
 npm run admin:ui
 ```
 
-## CLI
-
-Run project admin actions without opening the UI:
-
-```powershell
-npm run admin -- list
-```
-
-```powershell
-npm run admin -- add --json '{"icon":"folder","title":"Temp","description":"Temp project","techs":["test"],"_url":"https://github.com/example/temp","category":"test"}'
-```
-
-```powershell
-npm run admin -- delete 1 2
-```
-
-You can also use `--file project.json` for add.
-
 ## Test
 
 ```powershell
@@ -118,6 +100,8 @@ Hosted previews still need `PUBLIC_ADMIN_API_BASE_URL` pointed at an admin servi
 
 ## Operating Notes
 
+- Click a project card body to edit it. The drawer reuses the add form and saves changes to the same Supabase row.
+- Checkbox clicks only select rows for bulk delete; Code and Release links still open externally.
 - Categories are derived from existing project rows. Adding a project with a new category adds it to the list; deleting the last project in a category removes it from the list.
 - Tech stack input commits chips on comma or Enter and supports multi-word chips.
-- If create/delete returns `401`, confirm the local `ADMIN_PROJECTS_KEY` matches the Edge Function secret.
+- If create/update/delete returns `401`, confirm the local `ADMIN_PROJECTS_KEY` matches the Edge Function secret.

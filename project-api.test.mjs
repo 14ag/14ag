@@ -71,6 +71,26 @@ test('deleteProjects sends ids payload', async () => {
   assert.equal(calls[0].options.body, JSON.stringify({ ids: [1, 2] }));
 });
 
+test('updateProject sends admin key, row id, and project payload', async () => {
+  const calls = [];
+  const api = createProjectsApi({
+    env: {
+      DB_URL: 'https://example.supabase.co',
+      ADMIN_PROJECTS_KEY: 'secret'
+    },
+    fetchImpl: async (url, options) => {
+      calls.push({ url, options });
+      return jsonResponse({ project: { id: 2 } });
+    }
+  });
+
+  await api.updateProject(2, { title: 'Updated' });
+
+  assert.equal(calls[0].options.method, 'PATCH');
+  assert.equal(calls[0].options.headers['x-admin-key'], 'secret');
+  assert.equal(calls[0].options.body, JSON.stringify({ id: 2, project: { title: 'Updated' } }));
+});
+
 test('writes fail before network when admin key missing', async () => {
   const api = createProjectsApi({
     env: {
@@ -82,6 +102,10 @@ test('writes fail before network when admin key missing', async () => {
   });
 
   await assert.rejects(() => api.createProject({ title: 'One' }), {
+    message: 'ADMIN_PROJECTS_KEY is not configured.'
+  });
+
+  await assert.rejects(() => api.updateProject(1, { title: 'One' }), {
     message: 'ADMIN_PROJECTS_KEY is not configured.'
   });
 });

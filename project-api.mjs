@@ -61,6 +61,9 @@ export function createProjectsApi({ env = process.env, fetchImpl = fetch } = {})
     createProject(project) {
       return request('POST', { project });
     },
+    updateProject(id, project) {
+      return request('PATCH', { id, project });
+    },
     deleteProjects(ids) {
       return request('DELETE', { ids });
     }

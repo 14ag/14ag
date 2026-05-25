@@ -303,6 +303,24 @@ h2 {
   border-color: rgba(0, 212, 170, 0.35);
 }
 
+.project-edit-button {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.project-edit-button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 6px;
+}
+
 .select-control {
   position: absolute;
   top: 18px;

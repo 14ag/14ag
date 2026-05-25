@@ -4,7 +4,6 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "admin": "node cli.mjs",
     "admin:server": "node server.mjs",
     "admin:ui": "npm run dev",
     "dev": "vite --host 127.0.0.1 --port 5174",

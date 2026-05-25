@@ -5,7 +5,8 @@
     createProject,
     deleteProjects,
     fetchProjects,
-    projectIcons
+    projectIcons,
+    updateProject
   } from './lib/projects';
   import type { FormErrors, ProjectForm, ProjectRecord } from './lib/types';
 
@@ -28,6 +29,7 @@
   let deleting = false;
   let showForm = false;
   let showConfirm = false;
+  let editingProjectId: number | null = null;
   let form = emptyForm();
   let formErrors: FormErrors = {};
   let techDraft = '';
@@ -44,6 +46,7 @@
   $: selectedCount = selectedIds.size;
   $: selectedProjects = projects.filter((project) => selectedIds.has(project.id));
   $: canDelete = selectedCount > 0 && !deleting;
+  $: isEditing = editingProjectId !== null;
 
   onMount(() => {
     void loadProjects();
@@ -78,6 +81,7 @@
   }
 
   function openForm() {
+    editingProjectId = null;
     form = emptyForm();
     formErrors = {};
     techDraft = '';
@@ -87,9 +91,37 @@
     showForm = true;
   }
 
+  function openEditForm(project: ProjectRecord) {
+    editingProjectId = project.id;
+    form = {
+      icon: project.icon,
+      title: project.title,
+      description: project.description,
+      techs: [...project.techs],
+      _url: project._url === '#' ? '' : project._url,
+      live_url: project.live_url || '',
+      category: project.category
+    };
+    formErrors = {};
+    techDraft = '';
+
+    if (categories.includes(project.category)) {
+      categoryMode = 'existing';
+      selectedCategory = project.category;
+      newCategory = '';
+    } else {
+      categoryMode = 'new';
+      selectedCategory = '';
+      newCategory = project.category;
+    }
+
+    showForm = true;
+  }
+
   function closeForm() {
     if (!saving) {
       showForm = false;
+      editingProjectId = null;
     }
   }
 
@@ -230,16 +262,25 @@
     errorMessage = '';
 
     try {
-      await createProject({
+      const project = {
         ...form,
         title: form.title.trim(),
         description: form.description.trim(),
         category,
         _url: form._url.trim(),
         ...(form.live_url?.trim() ? { live_url: form.live_url.trim() } : {})
-      });
-      notice = 'Project added.';
+      };
+
+      if (editingProjectId !== null) {
+        await updateProject(editingProjectId, project);
+        notice = 'Project updated.';
+      } else {
+        await createProject(project);
+        notice = 'Project added.';
+      }
+
       showForm = false;
+      editingProjectId = null;
       await loadProjects();
     } catch (error) {
       errorMessage = error instanceof Error ? error.message : 'Project could not be added.';
@@ -367,18 +408,25 @@
               <span></span>
             </label>
 
-            <div class="card-icon">
-              <Icon name={project.icon} size={32} strokeWidth={1.5} />
-            </div>
+            <button
+              type="button"
+              class="project-edit-button"
+              aria-label={`Edit ${project.title}`}
+              onclick={() => openEditForm(project)}
+            >
+              <div class="card-icon">
+                <Icon name={project.icon} size={32} strokeWidth={1.5} />
+              </div>
 
-            <h3>{project.title}</h3>
-            <p>{project.description}</p>
+              <h3>{project.title}</h3>
+              <p>{project.description}</p>
 
-            <div class="project-tags">
-              {#each project.techs as tech}
-                <span>{tech}</span>
-              {/each}
-            </div>
+              <div class="project-tags">
+                {#each project.techs as tech}
+                  <span>{tech}</span>
+                {/each}
+              </div>
+            </button>
 
             <div class="project-links">
               <a href={project._url} target="_blank" rel="noopener noreferrer">Code</a>
@@ -396,11 +444,11 @@
 
 {#if showForm}
   <div class="scrim" role="presentation" onclick={closeForm}></div>
-  <aside class="drawer" aria-label="Add project">
+  <aside class="drawer" aria-label={isEditing ? 'Edit project' : 'Add project'}>
     <div class="drawer-header">
       <div>
-        <p class="eyebrow">New Supabase row</p>
-        <h2>Add project</h2>
+        <p class="eyebrow">{isEditing ? 'Update Supabase row' : 'New Supabase row'}</p>
+        <h2>{isEditing ? 'Edit project' : 'Add project'}</h2>
       </div>
       <button class="icon-button" type="button" aria-label="Close form" onclick={closeForm}>
         <Icon name="x" size={20} />
@@ -497,7 +545,7 @@
         <button class="btn btn-secondary" type="button" onclick={closeForm}>Cancel</button>
         <button class="btn btn-primary" type="submit" disabled={saving}>
           <Icon name="plus" size={18} />
-          {saving ? 'Adding' : 'Add project'}
+          {saving ? (isEditing ? 'Saving' : 'Adding') : (isEditing ? 'Save changes' : 'Add project')}
         </button>
       </div>
     </form>

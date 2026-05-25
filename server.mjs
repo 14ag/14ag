@@ -18,7 +18,7 @@ function sendJson(req, res, status, body) {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': allowOrigin,
     'Access-Control-Allow-Headers': 'content-type',
-    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
     Vary: 'Origin'
   });
   res.end(JSON.stringify(body));
@@ -60,6 +60,22 @@ async function handleProjects(req, res) {
     return;
   }
 
+  if (req.method === 'PATCH') {
+    const body = await readJson(req);
+    const id =
+      body && typeof body === 'object' && 'id' in body ? Number(body.id) : NaN;
+    const project =
+      body && typeof body === 'object' && 'project' in body ? body.project : null;
+
+    if (!Number.isInteger(id) || id < 0) {
+      sendJson(req, res, 400, { error: 'id must be a valid row ID.' });
+      return;
+    }
+
+    sendJson(req, res, 200, await api.updateProject(id, project));
+    return;
+  }
+
   if (req.method === 'DELETE') {
     const body = await readJson(req);
     const ids =
@@ -98,5 +114,5 @@ const server = createServer(async (req, res) => {
 });
 
 server.listen(port, host, () => {
-  console.log(`Admin CLI service listening on http://${host}:${port}`);
+  console.log(`Admin service listening on http://${host}:${port}`);
 });
