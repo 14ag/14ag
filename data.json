@@ -1,6 +1,6 @@
 {
-    "item1": {
-        "icon": "pc",
+    "0": {
+        "icon": "pc", 
         "category": "category",
         "techs": ["techs1", "techs2"],
         "title": "title",
@@ -8,7 +8,7 @@
         "_url":"codeUrl",
         "live_url":"liveUrl"
     },
-    "item2": {
+    "1": {
         "icon": "camera",
         "category": "scripts",
         "techs": ["powershell", "Exiftool", "batch"],
