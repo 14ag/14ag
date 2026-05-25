@@ -1,7 +1,9 @@
 const DEFAULT_ERROR = 'Request failed.';
 
 function getFunctionUrl(env) {
-  return (env.ADMIN_PROJECTS_FUNCTION_URL || '').replace(/\/$/, '');
+  const supabaseUrl = (env.DB_URL || '').replace(/\/$/, '');
+
+  return supabaseUrl ? `${supabaseUrl}/functions/v1/manage-projects` : '';
 }
 
 function getAdminKey(env) {
@@ -17,7 +19,7 @@ export function createProjectsApi({ env = process.env, fetchImpl = fetch } = {})
     const functionUrl = getFunctionUrl(env);
 
     if (!functionUrl) {
-      throw new Error('ADMIN_PROJECTS_FUNCTION_URL is not configured.');
+      throw new Error('DB_URL is not configured.');
     }
 
     const headers = {

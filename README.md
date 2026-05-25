@@ -9,6 +9,24 @@ Local-only Svelte/Vite app for managing portfolio projects.
 - Delete selected projects after confirmation.
 - Call a local Node admin service. The service calls the Supabase Edge Function with the admin key, so the browser never stores Supabase admin credentials.
 
+## Prerequisites
+
+- Node.js 18 or newer.
+- npm.
+- `DB_URL` for the Supabase project that hosts `manage-projects`.
+- Generated admin shared secret. Generate one with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
+- Same `ADMIN_PROJECTS_KEY` set in Supabase Edge Function secrets.
+
+Required `admin/.env` values:
+
+| Variable | Required | Where to get it |
+|---|---:|---|
+| `PUBLIC_ADMIN_API_BASE_URL` | No | Leave empty for Vite `/api` proxy, or set local admin service URL. |
+| `ADMIN_SERVER_HOST` | Yes | Local host for admin service, usually `127.0.0.1`. |
+| `ADMIN_SERVER_PORT` | Yes | Local port for admin service, usually `8787`. |
+| `DB_URL` | Yes | Supabase Dashboard project API URL, `https://<project-ref>.supabase.co`. |
+| `ADMIN_PROJECTS_KEY` | Yes | Same generated secret stored in Supabase Edge Function secrets. |
+
 ## Setup
 
 ```powershell
@@ -21,8 +39,8 @@ Create `admin/.env`:
 PUBLIC_ADMIN_API_BASE_URL=
 ADMIN_SERVER_HOST=127.0.0.1
 ADMIN_SERVER_PORT=8787
-ADMIN_PROJECTS_FUNCTION_URL=https://YOUR_PROJECT_REF.supabase.co/functions/v1/manage-projects
-ADMIN_PROJECTS_KEY=change-me
+DB_URL=https://<project-ref>.supabase.co
+ADMIN_PROJECTS_KEY=<generated-admin-secret>
 ```
 
 `ADMIN_PROJECTS_KEY` must match the Edge Function secret `ADMIN_PROJECTS_KEY`.

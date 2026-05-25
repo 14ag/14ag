@@ -14,7 +14,7 @@ test('listProjects calls Edge Function without admin key', async () => {
   const calls = [];
   const api = createProjectsApi({
     env: {
-      ADMIN_PROJECTS_FUNCTION_URL: 'https://example.supabase.co/functions/v1/manage-projects',
+      DB_URL: 'https://example.supabase.co',
       ADMIN_PROJECTS_KEY: 'secret'
     },
     fetchImpl: async (url, options) => {
@@ -35,7 +35,7 @@ test('createProject sends admin key and project payload', async () => {
   const calls = [];
   const api = createProjectsApi({
     env: {
-      ADMIN_PROJECTS_FUNCTION_URL: 'https://example.supabase.co/functions/v1/manage-projects/',
+      DB_URL: 'https://example.supabase.co/',
       ADMIN_PROJECTS_KEY: 'secret'
     },
     fetchImpl: async (url, options) => {
@@ -56,7 +56,7 @@ test('deleteProjects sends ids payload', async () => {
   const calls = [];
   const api = createProjectsApi({
     env: {
-      ADMIN_PROJECTS_FUNCTION_URL: 'https://example.supabase.co/functions/v1/manage-projects',
+      DB_URL: 'https://example.supabase.co',
       ADMIN_PROJECTS_KEY: 'secret'
     },
     fetchImpl: async (url, options) => {
@@ -74,7 +74,7 @@ test('deleteProjects sends ids payload', async () => {
 test('writes fail before network when admin key missing', async () => {
   const api = createProjectsApi({
     env: {
-      ADMIN_PROJECTS_FUNCTION_URL: 'https://example.supabase.co/functions/v1/manage-projects'
+      DB_URL: 'https://example.supabase.co'
     },
     fetchImpl: async () => {
       throw new Error('should not fetch');
