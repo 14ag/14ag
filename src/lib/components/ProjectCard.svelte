@@ -21,12 +21,12 @@
   </div>
 
   <div class="project-links">
-    <a href={project._url} target="_blank" rel="noopener" aria-label="GitHub repo">
+    <a href={project._url} target="_blank" rel="noopener noreferrer" aria-label="GitHub repo">
       {'</> Code'}
     </a>
 
     {#if project.live_url}
-      <a href={project.live_url} target="_blank" rel="noopener" aria-label="Live demo">
+      <a href={project.live_url} target="_blank" rel="noopener noreferrer" aria-label="Live demo">
         Live Demo
       </a>
     {/if}

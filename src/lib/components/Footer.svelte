@@ -8,7 +8,7 @@
     <a
       href="https://github.com/14ag"
       target="_blank"
-      rel="noopener"
+      rel="noopener noreferrer"
       class="footer-github"
       aria-label="GitHub profile"
     >

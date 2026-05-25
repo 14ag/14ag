@@ -119,7 +119,7 @@
                 href={channel.href}
                 class="contact-item"
                 target={channel.external ? '_blank' : undefined}
-                rel={channel.external ? 'noopener' : undefined}
+                rel={channel.external ? 'noopener noreferrer' : undefined}
               >
                 <div class="icon-circle">
                   <Icon name={channel.icon} size={20} />

@@ -6,6 +6,20 @@ function isRecord(value: unknown): value is UnknownRecord {
   return typeof value === 'object' && value !== null;
 }
 
+function isHttpUrl(value: string): boolean {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function safeProjectUrl(value: unknown, fallback = '#'): string {
+  const url = String(value || '').trim();
+  return isHttpUrl(url) ? url : fallback;
+}
+
 function toProject(item: unknown): Project | null {
   if (!isRecord(item)) {
     return null;
@@ -24,9 +38,11 @@ function toProject(item: unknown): Project | null {
     title: String(item.title || 'Untitled project'),
     description: String(item.description || 'No description available.'),
     techs,
-    _url: String(item._url || item.url || '#'),
+    _url: safeProjectUrl(item._url || item.url),
     category: String(item.category || 'other').toLowerCase(),
-    ...(liveUrl ? { live_url: String(liveUrl) } : {})
+    ...(liveUrl && isHttpUrl(String(liveUrl).trim())
+      ? { live_url: String(liveUrl).trim() }
+      : {})
   };
 }
 
