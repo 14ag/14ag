@@ -1,5 +1,5 @@
 from __future__ import annotations
-from supabase import create_client, Client 
+from supabase import create_client, Client
 from dotenv import load_dotenv, dotenv_values
 import json
 import os
@@ -10,18 +10,13 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-
-load_dotenv()
-
 try:
     import gkeepapi  # type: ignore
 except Exception:  # pragma: no cover
     gkeepapi = None
 
-
 DATA_FILE = Path(__file__).resolve().parent / "data.json"
 EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
-
 
 class MessagePayload(BaseModel):
     name: str
@@ -29,20 +24,32 @@ class MessagePayload(BaseModel):
     message_body: str
 
 
-app = FastAPI()
+def _parse_frontend_origins(raw_origins: str | None) -> list[str]:
+    if not raw_origins or not raw_origins.strip():
+        return []
 
+    raw_origins = raw_origins.strip()
+    try:
+        parsed = json.loads(raw_origins)
+    except json.JSONDecodeError:
+        return [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
+
+    if isinstance(parsed, str):
+        return [parsed.strip()] if parsed.strip() else []
+
+    if isinstance(parsed, list):
+        return [str(origin).strip() for origin in parsed if str(origin).strip()]
+
+    return []
+
+
+load_dotenv()
+
+app = FastAPI()
+_origins = _parse_frontend_origins(os.getenv("FRONTEND_URL"))
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://127.0.0.1:5500",
-        "http://localhost:5500",
-        "http://127.0.0.1:5173",
-        "http://localhost:5173",
-        "http://127.0.0.1:3000",
-        "http://localhost:3000",
-        "https://philip-muriuki.netlify.app/",
-        "null",
-    ],
+    allow_origins=_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
