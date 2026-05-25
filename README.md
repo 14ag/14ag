@@ -28,13 +28,7 @@ Reference:
 
 The frontend and admin read project rows from `public.projects`. Supabase is the only project source of truth.
 
-Apply the included migration:
-
-```sh
-supabase db push
-```
-
-Or run the SQL directly:
+Create the table by running this SQL in the Supabase SQL Editor or through your normal database migration tool:
 
 ```sql
 create table if not exists public.projects (
