@@ -1,7 +1,7 @@
 <script>
-  import { env } from '$env/dynamic/public';
+  import { CONTACT_EMAIL } from '$lib/config';
 
-  const contactEmail = env.PUBLIC_CONTACT_EMAIL;
+  const contactEmail = CONTACT_EMAIL;
 </script>
 
   <!-- ===== CONTACT ===== -->

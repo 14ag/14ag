@@ -1,7 +1,5 @@
-import { env } from '$env/dynamic/public';
+import { CONTACT_EMAIL } from '$lib/config';
 import type { AboutStat, ContactChannel, NavLink, SkillCategory } from '$lib/types';
-
-const contactEmail = env.PUBLIC_CONTACT_EMAIL;
 
 export const navLinks: NavLink[] = [
   { id: 'home', label: 'Home' },
@@ -66,7 +64,7 @@ export const aboutStats: AboutStat[] = [
 ];
 
 export const contactChannels: ContactChannel[] = [
-  { icon: 'mail', label: contactEmail, href: `mailto:${contactEmail}` },
+  { icon: 'mail', label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
   { icon: 'phone', label: '+254 725 091 032', href: 'tel:+254725091032' },
   { icon: 'pin', label: 'Nairobi, Kenya' },
   { icon: 'github', label: 'GitHub', href: 'https://github.com/14ag', external: true },
