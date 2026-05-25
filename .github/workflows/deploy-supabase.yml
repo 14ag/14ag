@@ -25,8 +25,20 @@ jobs:
         with:
           version: latest
 
+      - name: Resolve Supabase project ref
+        run: |
+          project_ref="${SUPABASE_URL#https://}"
+          project_ref="${project_ref%%.supabase.co*}"
+
+          if ! [[ "$project_ref" =~ ^[a-z0-9]{20}$ ]]; then
+            echo "SUPABASE_URL must look like https://<project-ref>.supabase.co"
+            exit 1
+          fi
+
+          echo "SUPABASE_PROJECT_REF=$project_ref" >> "$GITHUB_ENV"
+
       - name: Link Supabase project
-        run: supabase link --project-ref "$SUPABASE_URL"
+        run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
 
       - name: Deploy manage-projects function
-        run: supabase functions deploy manage-projects --project-ref "$SUPABASE_URL" --no-verify-jwt
+        run: supabase functions deploy manage-projects --project-ref "$SUPABASE_PROJECT_REF" --no-verify-jwt

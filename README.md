@@ -7,7 +7,6 @@ Supabase project assets for portfolio project management.
 - Supabase account and project.
 - Supabase CLI installed and logged in.
 - `SUPABASE_URL` from the Supabase project URL, `https://<project-ref>.supabase.co`.
-- `SUPABASE_URL` for GitHub Actions and Supabase CLI. This is the `<project-ref>` part of `SUPABASE_URL`.
 - Generated admin shared secret. Generate one with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
 - Supabase service role or secret key from Supabase Dashboard, Settings, API Keys.
 
@@ -138,12 +137,12 @@ supabase functions deploy manage-projects --project-ref <project-ref> --no-verif
 
 The Supabase repository includes `.github/workflows/deploy-supabase.yml`. It is intended for this repo's GitHub `supabase` branch.
 
-Add these GitHub repository secrets before enabling it:
+Add these GitHub repository settings before enabling it:
 
-| Secret | Where to get it |
+| Name | Type | Where to get it |
 |---|---|
-| `SUPABASE_ACCESS_TOKEN` | Supabase Dashboard, Account, Access Tokens. |
-| `SUPABASE_URL` | The `<project-ref>` part of `SUPABASE_URL`. |
+| `SUPABASE_ACCESS_TOKEN` | Secret | Supabase Dashboard, Account, Access Tokens. |
+| `SUPABASE_URL` | Variable | Supabase project API URL, `https://<project-ref>.supabase.co`. |
 
 The workflow deploys only `manage-projects` with `supabase functions deploy manage-projects --no-verify-jwt`.
 
