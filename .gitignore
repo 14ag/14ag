@@ -1,6 +1,9 @@
 .venv/
-experiments.ipynb
 launcher.bat
 auth/
 experiments.ipynb
 env.txt
+experiments copy.ipynb
+
+__pycache__/
+test_responses.bat
