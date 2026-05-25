@@ -1,42 +1,50 @@
-# sv
+# Frontend
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Public SvelteKit portfolio site.
 
-## Creating a project
+## Responsibilities
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Loads project cards from the backend `GET /projects`.
+- Renders project filters, skills, about, and contact sections.
+- Sends contact messages to the backend.
 
-```sh
-# create a new project
-npx sv create my-app
+## Setup
+
+```powershell
+npm install
 ```
 
-To recreate this project with the same configuration:
+Create `frontend/.env`:
 
-```sh
-# recreate this project
-npx sv@0.15.1 create --template minimal --types jsdoc --install npm ./
+```env
+PUBLIC_API_BASE_URL=http://127.0.0.1:8000
 ```
 
-## Developing
+If `PUBLIC_API_BASE_URL` is missing, the app uses `http://127.0.0.1:8000`.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Run
 
-```sh
+```powershell
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+Default local URL: `http://localhost:5173`.
 
-To create a production version of your app:
+## Test
 
-```sh
+```powershell
+npm run check
+npm run build
+npx playwright test full-stack-projects.spec.js --reporter=line
+```
+
+The Playwright test expects the backend to be running on `http://127.0.0.1:8000`.
+
+## Deploy
+
+```powershell
+npm run check
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+The app uses `@sveltejs/adapter-auto`; choose a SvelteKit adapter if the target host needs one.
