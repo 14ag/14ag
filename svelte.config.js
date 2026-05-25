@@ -1,4 +1,8 @@
-import adapter from '@sveltejs/adapter-netlify';
+import netlify from '@sveltejs/adapter-netlify';
+import vercel from '@sveltejs/adapter-vercel';
+
+const target = process.env.SVELTEKIT_ADAPTER || (process.env.VERCEL ? 'vercel' : 'netlify');
+const adapter = target === 'vercel' ? vercel() : netlify();
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -7,7 +11,7 @@ const config = {
       filename.split(/[/\\]/).includes('node_modules') ? undefined : true
   },
   kit: {
-    adapter: adapter()
+    adapter
   }
 };
 

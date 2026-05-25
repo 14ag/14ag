@@ -8,20 +8,19 @@ Public SvelteKit portfolio site.
 - Renders project filters, skills, about, and contact sections.
 - Sends contact messages to backend `POST /message`.
 - Normalizes project links before rendering so only `http://` and `https://` URLs become external links.
+- Shows the public email address as static contact text; clicking it focuses the message field instead of opening `mailto:`.
 
 ## Prerequisites
 
 - Node.js 18 or newer.
 - npm.
 - Backend API running locally or deployed.
-- Contact email to display on the site.
 
 Required `frontend/.env` values:
 
 | Variable | Required | Where to get it |
 |---|---:|---|
 | `API_BASE_URL` | Yes | Backend URL, such as `http://127.0.0.1:8000` or deployed backend origin. |
-| `PUBLIC_CONTACT_EMAIL` | Yes | Contact email shown in the portfolio contact section. |
 
 ## Setup
 
@@ -33,7 +32,6 @@ Create `frontend/.env`:
 
 ```env
 API_BASE_URL=http://127.0.0.1:8000
-PUBLIC_CONTACT_EMAIL=you@example.com
 ```
 
 If `API_BASE_URL` is missing, the app uses `http://127.0.0.1:8000`.
@@ -64,6 +62,13 @@ npm run check
 npm run build
 ```
 
-The app uses `@sveltejs/adapter-auto`; choose a SvelteKit adapter if the target host needs one.
+The app supports Netlify and Vercel builds through `svelte.config.js`.
+
+| Host | Config file | Build command |
+|---|---|---|
+| Netlify | `netlify.toml` | `SVELTEKIT_ADAPTER=netlify npm run build` |
+| Vercel | `vercel.json` | `SVELTEKIT_ADAPTER=vercel npm run build` |
+
+If `SVELTEKIT_ADAPTER` is unset, local builds use the Netlify adapter unless Vercel sets `VERCEL`.
 
 Use the canonical deployment runbook in `../main/DEPLOYMENT.md` or the `main` branch `DEPLOYMENT.md` for full deployment order, smoke checks, and rollback.

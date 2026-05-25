@@ -746,13 +746,29 @@ img {
   transition: transform var(--speed) var(--ease);
 }
 
-a.contact-item:hover {
+a.contact-item:hover,
+button.contact-item:hover {
   transform: translateX(6px);
 }
 
-a.contact-item:hover .icon-circle {
+a.contact-item:hover .icon-circle,
+button.contact-item:hover .icon-circle {
   background: var(--accent);
   color: #0a0a1a;
+}
+
+button.contact-item {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  text-align: left;
+}
+
+.contact-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
 }
 
 .contact-item .icon-circle {

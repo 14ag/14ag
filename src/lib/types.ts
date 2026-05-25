@@ -38,6 +38,7 @@ export interface ContactChannel {
   icon: 'mail' | 'phone' | 'pin' | 'github' | 'linkedin';
   label: string;
   href?: string;
+  action?: 'message';
   external?: boolean;
 }
 

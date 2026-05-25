@@ -1,4 +1,3 @@
-import { CONTACT_EMAIL } from '$lib/config';
 import type { AboutStat, ContactChannel, NavLink, SkillCategory } from '$lib/types';
 
 export const navLinks: NavLink[] = [
@@ -64,7 +63,7 @@ export const aboutStats: AboutStat[] = [
 ];
 
 export const contactChannels: ContactChannel[] = [
-  { icon: 'mail', label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}` },
+  { icon: 'mail', label: 'muriukipn@gmail.com', action: 'message' },
   { icon: 'phone', label: '+254 725 091 032', href: 'tel:+254725091032' },
   { icon: 'pin', label: 'Nairobi, Kenya' },
   { icon: 'github', label: 'GitHub', href: 'https://github.com/14ag', external: true },

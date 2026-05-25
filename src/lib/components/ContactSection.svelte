@@ -28,6 +28,7 @@
   });
 
   let submitting = $state(false);
+  let messageInput: HTMLTextAreaElement | undefined;
 
   let errors = $derived({
     name: form.name.trim() ? '' : 'Please enter your name.',
@@ -51,6 +52,11 @@
     touched.name = false;
     touched.email = false;
     touched.message = false;
+  }
+
+  function focusMessageBox() {
+    touched.message = true;
+    messageInput?.focus();
   }
 
   async function submitForm(event: SubmitEvent) {
@@ -114,7 +120,19 @@
 
         <div class="contact-details">
           {#each contactChannels as channel}
-            {#if channel.href}
+            {#if channel.action === 'message'}
+              <button
+                type="button"
+                class="contact-item"
+                aria-label={`Focus message form for ${channel.label}`}
+                onclick={focusMessageBox}
+              >
+                <div class="icon-circle">
+                  <Icon name={channel.icon} size={20} />
+                </div>
+                <span>{channel.label}</span>
+              </button>
+            {:else if channel.href}
               <a
                 href={channel.href}
                 class="contact-item"
@@ -168,6 +186,7 @@
         <div class:error={touched.message && !!errors.message} class="form-group">
           <textarea
             id="form-message"
+            bind:this={messageInput}
             placeholder=" "
             bind:value={form.message}
             onblur={() => (touched.message = true)}
