@@ -38,8 +38,14 @@ jobs:
 
           echo "SUPABASE_PROJECT_REF=$project_ref" >> "$GITHUB_ENV"
 
+      - name: Prepare Supabase CLI layout
+        run: |
+          mkdir -p supabase/functions
+          cp config.toml supabase/config.toml
+          cp -R functions/manage-projects supabase/functions/manage-projects
+
       - name: Link Supabase project
-        run: supabase --workdir . link --project-ref "$SUPABASE_PROJECT_REF"
+        run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
 
       - name: Deploy manage-projects function
-        run: supabase --workdir . functions deploy manage-projects --project-ref "$SUPABASE_PROJECT_REF" --no-verify-jwt
+        run: supabase functions deploy manage-projects --project-ref "$SUPABASE_PROJECT_REF" --no-verify-jwt
