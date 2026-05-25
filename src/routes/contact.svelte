@@ -1,3 +1,9 @@
+<script>
+  import { env } from '$env/dynamic/public';
+
+  const contactEmail = env.PUBLIC_CONTACT_EMAIL || 'muriukipn@gmail.com';
+</script>
+
   <!-- ===== CONTACT ===== -->
   <section id="contact" class="contact">
     <div class="container">
@@ -15,7 +21,7 @@
           </p>
 
           <div class="contact-details">
-            <a href="mailto:muriukipn@gmail.com" class="contact-item">
+            <a href={`mailto:${contactEmail}`} class="contact-item">
               <div class="icon-circle">
                 <!-- <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -23,7 +29,7 @@
                   <polyline points="22,6 12,13 2,6" />
                 </svg> -->
               </div>
-              <span>muriukipn@gmail.com</span>
+              <span>{contactEmail}</span>
             </a>
             <a href="tel:+254725091032" class="contact-item">
               <div class="icon-circle">

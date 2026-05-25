@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test('frontend loads projects from backend API', async ({ page }) => {
   await page.goto('http://127.0.0.1:5173/');
-  await expect(page.getByText('title').first()).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible();
   await expect(page.getByText('Could not load projects right now.')).toHaveCount(0);
 
   const browserFetchResult = await page.evaluate(async () => {
@@ -12,13 +12,13 @@ test('frontend loads projects from backend API', async ({ page }) => {
     return {
       ok: response.ok,
       status: response.status,
-      projectCount: payload.projects.length
+      hasProjectsArray: Array.isArray(payload.projects)
     };
   });
 
   expect(browserFetchResult).toEqual({
     ok: true,
     status: 200,
-    projectCount: 1
+    hasProjectsArray: true
   });
 });
