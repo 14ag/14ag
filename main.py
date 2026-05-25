@@ -1,4 +1,5 @@
 from __future__ import annotations
+from cProfile import label
 from dotenv import load_dotenv
 import json
 import logging
@@ -183,10 +184,13 @@ async def receive_message(request: Request, payload: MessagePayload) -> dict[str
             f"Email: {payload.email.strip()}\n\n"
             f"\n{payload.message_body.strip()}"
         )
+        label = keep.findLabel('portfolio messages')
+        if not label:
+            label = keep.createLabel('portfolio messages')
+        note.labels.add(label)
         note = keep.createNote(payload.name.strip(), note_body)
-        note.pinned = False
+        note.pinned = True
         note.color = gkeepapi.node.ColorValue.Teal
-        note.labels.add()
         keep.sync()
 
         return {"status": "success", "message": "Message saved to Google Keep."}
