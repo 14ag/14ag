@@ -96,7 +96,7 @@ npm test
 ## Operating Notes
 
 - This app is local-only by design.
-- Do not put Supabase service-role credentials in browser-exposed variables.
+- Do not put `DB_SUPABASE_SECRET_KEY` or any Supabase secret key in browser-exposed variables.
 - Browser code calls `/api/projects`; Vite proxies that path to the local Node admin service.
 - Categories are derived from existing project rows. Adding a project with a new category adds it to the list; deleting the last project in a category removes it from the list.
 - Tech stack input commits chips on comma or Enter and supports multi-word chips.
