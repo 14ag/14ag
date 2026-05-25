@@ -7,11 +7,11 @@ export const projectIcons: ProjectIcon[] = ['file', 'pc', 'folder', 'net', 'came
 const adminApiBaseUrl = (import.meta.env.PUBLIC_ADMIN_API_BASE_URL || '').replace(/\/$/, '');
 const projectsUrl = `${adminApiBaseUrl}/api/projects`;
 
-function isRecord(value: unknown): value is UnknownRecord {
+function isAdminProjectRecord(value: unknown): value is UnknownRecord {
   return typeof value === 'object' && value !== null;
 }
 
-function isHttpUrl(value: string): boolean {
+function isAdminHttpUrl(value: string): boolean {
   try {
     const url = new URL(value);
     return url.protocol === 'http:' || url.protocol === 'https:';
@@ -20,17 +20,17 @@ function isHttpUrl(value: string): boolean {
   }
 }
 
-function safeProjectUrl(value: unknown, fallback = '#'): string {
+function safeAdminProjectUrl(value: unknown, fallback = '#'): string {
   const url = String(value || '').trim();
-  return isHttpUrl(url) ? url : fallback;
+  return isAdminHttpUrl(url) ? url : fallback;
 }
 
 function normalizeProject(item: unknown): ProjectRecord | null {
-  if (!isRecord(item)) {
+  if (!isAdminProjectRecord(item)) {
     return null;
   }
 
-  const metadata = isRecord(item.project_metadata) ? item.project_metadata : item;
+  const metadata = isAdminProjectRecord(item.project_metadata) ? item.project_metadata : item;
   const id = Number(item.id);
 
   if (!Number.isFinite(id)) {
@@ -54,21 +54,21 @@ function normalizeProject(item: unknown): ProjectRecord | null {
     title: String(metadata.title || 'Untitled project'),
     description: String(metadata.description || 'No description available.'),
     techs,
-    _url: safeProjectUrl(metadata._url || metadata.url),
+    _url: safeAdminProjectUrl(metadata._url || metadata.url),
     category: String(metadata.category || 'other').toLowerCase(),
-    ...(liveUrl && isHttpUrl(String(liveUrl).trim())
+    ...(liveUrl && isAdminHttpUrl(String(liveUrl).trim())
       ? { live_url: String(liveUrl).trim() }
       : {})
   };
 }
 
-function deriveCategories(projects: ProjectRecord[]): string[] {
+function deriveAdminCategories(projects: ProjectRecord[]): string[] {
   return Array.from(new Set(projects.map((project) => project.category))).sort((a, b) =>
     a.localeCompare(b)
   );
 }
 
-async function request<T>(method: 'GET' | 'POST' | 'PATCH' | 'DELETE', body?: unknown): Promise<T> {
+async function requestAdminProjects<T>(method: 'GET' | 'POST' | 'PATCH' | 'DELETE', body?: unknown): Promise<T> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json'
   };
@@ -82,7 +82,7 @@ async function request<T>(method: 'GET' | 'POST' | 'PATCH' | 'DELETE', body?: un
   const payload = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const message = isRecord(payload) && payload.error ? String(payload.error) : 'Request failed.';
+    const message = isAdminProjectRecord(payload) && payload.error ? String(payload.error) : 'Request failed.';
     throw new Error(message);
   }
 
@@ -90,9 +90,9 @@ async function request<T>(method: 'GET' | 'POST' | 'PATCH' | 'DELETE', body?: un
 }
 
 export async function fetchProjects(): Promise<ProjectsResponse> {
-  const payload = await request<unknown>('GET');
+  const payload = await requestAdminProjects<unknown>('GET');
   const rawProjects =
-    isRecord(payload) && Array.isArray(payload.projects)
+    isAdminProjectRecord(payload) && Array.isArray(payload.projects)
       ? payload.projects
       : Array.isArray(payload)
         ? payload
@@ -101,9 +101,9 @@ export async function fetchProjects(): Promise<ProjectsResponse> {
     .map(normalizeProject)
     .filter((project): project is ProjectRecord => project !== null);
   const categories =
-    isRecord(payload) && Array.isArray(payload.categories)
+    isAdminProjectRecord(payload) && Array.isArray(payload.categories)
       ? payload.categories.map((category) => String(category)).filter(Boolean)
-      : deriveCategories(projects);
+      : deriveAdminCategories(projects);
 
   return {
     projects,
@@ -111,14 +111,14 @@ export async function fetchProjects(): Promise<ProjectsResponse> {
   };
 }
 
-export async function createProject(project: ProjectForm): Promise<void> {
-  await request('POST', { project });
+export async function createAdminProject(project: ProjectForm): Promise<void> {
+  await requestAdminProjects('POST', { project });
 }
 
-export async function updateProject(id: number, project: ProjectForm): Promise<void> {
-  await request('PATCH', { id, project });
+export async function updateAdminProject(id: number, project: ProjectForm): Promise<void> {
+  await requestAdminProjects('PATCH', { id, project });
 }
 
-export async function deleteProjects(ids: number[]): Promise<void> {
-  await request('DELETE', { ids });
+export async function deleteAdminProjects(ids: number[]): Promise<void> {
+  await requestAdminProjects('DELETE', { ids });
 }

@@ -10,18 +10,26 @@ function jsonResponse(body, ok = true, status = ok ? 200 : 500) {
   };
 }
 
+function createApi(calls, env, body = {}) {
+  return createProjectsApi({
+    env,
+    fetchImpl: async (url, options) => {
+      calls.push({ url, options });
+      return jsonResponse(body);
+    }
+  });
+}
+
 test('listProjects calls Edge Function without admin key', async () => {
   const calls = [];
-  const api = createProjectsApi({
-    env: {
+  const api = createApi(
+    calls,
+    {
       DB_URL: 'https://example.supabase.co',
       ADMIN_PROJECTS_KEY: 'secret'
     },
-    fetchImpl: async (url, options) => {
-      calls.push({ url, options });
-      return jsonResponse({ projects: [], categories: [] });
-    }
-  });
+    { projects: [], categories: [] }
+  );
 
   const result = await api.listProjects();
 
@@ -33,16 +41,14 @@ test('listProjects calls Edge Function without admin key', async () => {
 
 test('createProject sends admin key and project payload', async () => {
   const calls = [];
-  const api = createProjectsApi({
-    env: {
+  const api = createApi(
+    calls,
+    {
       DB_URL: 'https://example.supabase.co/',
       ADMIN_PROJECTS_KEY: 'secret'
     },
-    fetchImpl: async (url, options) => {
-      calls.push({ url, options });
-      return jsonResponse({ project: { id: 1 } }, true, 201);
-    }
-  });
+    { project: { id: 1 } }
+  );
 
   await api.createProject({ title: 'One' });
 
@@ -54,16 +60,14 @@ test('createProject sends admin key and project payload', async () => {
 
 test('deleteProjects sends ids payload', async () => {
   const calls = [];
-  const api = createProjectsApi({
-    env: {
+  const api = createApi(
+    calls,
+    {
       DB_URL: 'https://example.supabase.co',
       ADMIN_PROJECTS_KEY: 'secret'
     },
-    fetchImpl: async (url, options) => {
-      calls.push({ url, options });
-      return jsonResponse({ deletedIds: [1, 2] });
-    }
-  });
+    { deletedIds: [1, 2] }
+  );
 
   await api.deleteProjects([1, 2]);
 
@@ -71,24 +75,26 @@ test('deleteProjects sends ids payload', async () => {
   assert.equal(calls[0].options.body, JSON.stringify({ ids: [1, 2] }));
 });
 
-test('updateProject sends admin key, row id, and project payload', async () => {
+test('updateProject uses direct Supabase REST with secret key', async () => {
   const calls = [];
   const api = createProjectsApi({
     env: {
-      DB_URL: 'https://example.supabase.co',
-      ADMIN_PROJECTS_KEY: 'secret'
+      DB_URL: 'https://example.supabase.co/',
+      DB_SUPABASE_SECRET_KEY: 'secret-key'
     },
     fetchImpl: async (url, options) => {
       calls.push({ url, options });
-      return jsonResponse({ project: { id: 2 } });
+      return jsonResponse([{ id: 2, project_metadata: { title: 'Updated' } }]);
     }
   });
 
   await api.updateProject(2, { title: 'Updated' });
 
+  assert.equal(calls[0].url, 'https://example.supabase.co/rest/v1/projects?id=eq.2&select=id,project_metadata');
   assert.equal(calls[0].options.method, 'PATCH');
-  assert.equal(calls[0].options.headers['x-admin-key'], 'secret');
-  assert.equal(calls[0].options.body, JSON.stringify({ id: 2, project: { title: 'Updated' } }));
+  assert.equal(calls[0].options.headers.apikey, 'secret-key');
+  assert.equal(calls[0].options.headers.Authorization, 'Bearer secret-key');
+  assert.equal(calls[0].options.body, JSON.stringify({ project_metadata: { title: 'Updated' } }));
 });
 
 test('writes fail before network when admin key missing', async () => {
@@ -106,6 +112,6 @@ test('writes fail before network when admin key missing', async () => {
   });
 
   await assert.rejects(() => api.updateProject(1, { title: 'One' }), {
-    message: 'ADMIN_PROJECTS_KEY is not configured.'
+    message: 'DB_SUPABASE_SECRET_KEY is not configured.'
   });
 });

@@ -2,11 +2,11 @@
   import { onMount } from 'svelte';
   import Icon from './lib/Icon.svelte';
   import {
-    createProject,
-    deleteProjects,
+    createAdminProject,
+    deleteAdminProjects,
     fetchProjects,
     projectIcons,
-    updateProject
+    updateAdminProject
   } from './lib/projects';
   import type { FormErrors, ProjectForm, ProjectRecord } from './lib/types';
 
@@ -52,7 +52,7 @@
     void loadProjects();
   });
 
-  function formatCategory(category: string) {
+  function formatAdminCategory(category: string) {
     return category.charAt(0).toUpperCase() + category.slice(1);
   }
 
@@ -272,10 +272,10 @@
       };
 
       if (editingProjectId !== null) {
-        await updateProject(editingProjectId, project);
+        await updateAdminProject(editingProjectId, project);
         notice = 'Project updated.';
       } else {
-        await createProject(project);
+        await createAdminProject(project);
         notice = 'Project added.';
       }
 
@@ -299,7 +299,7 @@
     errorMessage = '';
 
     try {
-      await deleteProjects([...selectedIds]);
+      await deleteAdminProjects([...selectedIds]);
       notice = 'Selected projects deleted.';
       showConfirm = false;
       selectedIds = new Set();
@@ -386,7 +386,7 @@
           type="button"
           onclick={() => (activeFilter = category)}
         >
-          {formatCategory(category)}
+          {formatAdminCategory(category)}
         </button>
       {/each}
     </div>
@@ -483,7 +483,7 @@
           {#if categoryMode === 'existing' && categories.length > 0}
             <select bind:value={selectedCategory}>
               {#each categories as category}
-                <option value={category}>{formatCategory(category)}</option>
+                <option value={category}>{formatAdminCategory(category)}</option>
               {/each}
               <option value="">New category</option>
             </select>
