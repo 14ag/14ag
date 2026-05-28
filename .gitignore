@@ -1,0 +1,12 @@
+node_modules/
+.svelte-kit/
+.netlify/
+.vercel/
+build/
+dist/
+.env
+.env.*
+!.env.example
+
+env.txt
+temp.txt

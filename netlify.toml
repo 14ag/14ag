@@ -1,0 +1,3 @@
+[build]
+command = "SVELTEKIT_ADAPTER=netlify npm run build"
+publish = "build"

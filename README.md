@@ -1,17 +1,74 @@
-![Banner](./assets/banner.webp)
+# Frontend
 
-## Philip wants you to look at his Repos and Contribute
+Public SvelteKit portfolio site.
 
+## Responsibilities
 
-This is stash 1/2 where he keep code
- 
-## His Method
+- Loads project cards from backend `GET /projects`.
+- Renders project filters, skills, about, and contact sections.
+- Sends contact messages to backend `POST /message`.
+- Normalizes project links before rendering so only `http://` and `https://` URLs become external links.
+- Shows the public email address as static contact text; clicking it focuses the message field instead of opening `mailto:`.
 
-1. Write code 
-2. Make it work (fingers crossed)
-3. repeat
+## Prerequisites
 
+- Node.js 18 or newer.
+- npm.
+- Backend API running locally or deployed.
 
-Feel free to:
-- 🔍 Bite our repos (they don't explore, usually)
+Required `frontend/.env` values:
 
+| Variable | Required | Where to get it |
+|---|---:|---|
+| `API_BASE_URL` | Yes | Backend URL, such as `http://127.0.0.1:8000` or deployed backend origin. |
+
+## Setup
+
+```powershell
+npm install
+```
+
+Create `frontend/.env`:
+
+```env
+API_BASE_URL=http://127.0.0.1:8000
+```
+
+If `API_BASE_URL` is missing, the app uses `http://127.0.0.1:8000`.
+`API_BASE_URL` is browser-exposed through the Vite `API_` env prefix, so store only the public backend origin in it.
+
+## Run
+
+```powershell
+npm run dev
+```
+
+Default local URL: `http://localhost:5173`.
+
+## Test
+
+```powershell
+npm run check
+npm run build
+npx playwright test full-stack-projects.spec.js --reporter=line
+```
+
+The Playwright test expects the backend to be running on `http://127.0.0.1:8000`.
+
+## Deploy
+
+```powershell
+npm run check
+npm run build
+```
+
+The app supports Netlify and Vercel builds through `svelte.config.js`.
+
+| Host | Config file | Build command |
+|---|---|---|
+| Netlify | `netlify.toml` | `SVELTEKIT_ADAPTER=netlify npm run build` |
+| Vercel | `vercel.json` | `SVELTEKIT_ADAPTER=vercel npm run build` |
+
+If `SVELTEKIT_ADAPTER` is unset, local builds use the Netlify adapter unless Vercel sets `VERCEL`.
+
+Use the canonical deployment runbook in `../main/DEPLOYMENT.md` or the `main` branch `DEPLOYMENT.md` for full deployment order, smoke checks, and rollback.
