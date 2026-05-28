@@ -1,0 +1,20 @@
+{
+    "0": {
+        "icon": "pc", 
+        "category": "category",
+        "techs": ["techs1", "techs2"],
+        "title": "title",
+        "description": "description",
+        "_url":"codeUrl",
+        "live_url":"liveUrl"
+    },
+    "1": {
+        "icon": "camera",
+        "category": "scripts",
+        "techs": ["powershell", "Exiftool", "batch"],
+        "title": "Takeout Metadata Embedder",
+        "description": "descriptions back into media files via ExifTool.",
+        "_url":"https://github.com/14ag/takeout-matadata",
+        "live_url":""
+    }
+}
