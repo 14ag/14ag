@@ -1,10 +1,10 @@
 ![Banner](./assets/banner.webp)
 
-## Philip :: /dev/helloworld
+### Philip :: /dev/helloworld
 
-I startd coding to communicate with systems very specific instructions 
+I started coding to communicate with systems some instructions 
  
-## overview
+### overview
 
 1. Svelte frontends
 2. Fast api backends
