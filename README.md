@@ -2,14 +2,13 @@
 
 ## Philip wants you to look at his Repos and Contribute
 
-
-This is stash 1/2 where he keep code
+I startd coding to communicate with systems very specific instructions 
  
-## His Method
+## overview
 
-1. Write code 
-2. Make it work
-3. repeat
+1. Svelte frontends
+2. Fast api backends
+3. AI tools
 
 
 Feel free to:
