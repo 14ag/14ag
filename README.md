@@ -1,6 +1,6 @@
 ![Banner](./assets/banner.webp)
 
-### Philip :: /dev/helloworld
+### Philip 
 
 I started coding to communicate with systems some instructions 
  
