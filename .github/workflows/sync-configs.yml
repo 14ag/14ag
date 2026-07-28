@@ -1,0 +1,23 @@
+name: Distribute Repository Configuration
+on:
+  workflow_dispatch:
+
+jobs:
+  distribute:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute GitHub CLI distribution
+        env:
+          GH_TOKEN: ${{ secrets.PAT_KEY }}
+          BANNER_KEY: ${{ secrets.BANNER_KEY }}
+          VERCEL_URL: ${{ vars.VERCEL_URL }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          repositories=$(gh repo list "$OWNER" --limit 1000 --json nameWithOwner --jq '.[].nameWithOwner')
+
+          for repository in $repositories; do
+            if [ "$repository" != "${{ github.repository }}" ]; then
+              gh secret set BANNER_KEY -R "$repository" -b "$BANNER_KEY"
+              gh variable set VERCEL_URL -R "$repository" -b "$VERCEL_URL"
+            fi
+          done
