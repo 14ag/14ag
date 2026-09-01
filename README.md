@@ -2,13 +2,13 @@
 
 ### Philip 
 
-I started coding to make computers do things that it couldn't do before
+I started coding to make computers do things
  <br>
 ### What you'll see
 
 1. Svelte frontends
 2. Fastapi backends
-3. Maintainable batch scripts
+3. The batch scripts
 3. AI plugins
 4. C++
 
