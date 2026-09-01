@@ -15,6 +15,6 @@ yes
 
 Feel free to:
 
- ![🔍](assets/search-icon.svg) Bite our repos (they don't explore, usually)
+ ![🔍](assets/search-icon.svg) Bite our repos (they don't explore, usually XD)
 
 [start here](https://github.com/14ag?tab=repositories)
