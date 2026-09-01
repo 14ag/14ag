@@ -2,14 +2,16 @@
 
 ### Philip 
 
-I started coding to communicate with systems some instructions 
- 
-### overview
+I started coding to make computers do things
+ <br>
+### rundown
 
 1. Svelte frontends
-2. Fast api backends
-3. AI tools
+2. Fastapi backends
+3. AI plugins
+4. C++
 
+yes
 
 Feel free to:
 
