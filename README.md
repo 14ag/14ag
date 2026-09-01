@@ -8,7 +8,7 @@ I started coding to make computers do things that it couldn't do before
 
 1. Svelte frontends
 2. Fastapi backends
-3. Modular batch scripts
+3. Maintainable batch scripts
 3. AI plugins
 4. C++
 
